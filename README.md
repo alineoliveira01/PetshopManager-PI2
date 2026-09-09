@@ -4,7 +4,7 @@ API REST para sistema de gerenciamento de Petshop.
 
 # Tecnologias Utilizadas
 
-Node.js (ES Modules), Express, Prisma ORM, PostgreSQL, Zod e Swagger UI Express.
+Node.js , Express, Prisma ORM, PostgreSQL, Zod e Swagger.
 
 # Pré-requisitos
 
