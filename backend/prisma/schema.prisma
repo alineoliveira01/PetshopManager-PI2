@@ -1,0 +1,195 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Customer {
+  id           String        @id @default(uuid())
+  nomeCompleto String
+  cpf          String        @unique
+  telefone     String
+  email        String        @unique
+  endereco     String
+  numero       String
+  complemento  String?
+  bairro       String
+  cidade       String
+  estado       String
+  cep          String
+  observacoes  String?
+  ativo        Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  deletedAt    DateTime?
+  pets         Pet[]
+  appointments Appointment[]
+  sales        Sale[]
+}
+
+model Pet {
+  id            String        @id @default(uuid())
+  customerId    String
+  customer      Customer      @relation(fields: [customerId], references: [id])
+  nome          String
+  especie       String
+  raca          String
+  sexo          String
+  pesoAtual     Decimal
+  tamanho       String
+  tamanhoDoPelo String
+  idade         Int
+  tranquilidade String
+  observacoes   String?
+  ativo         Boolean       @default(true)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  deletedAt     DateTime?
+  history       PetHistory[]
+  appointments  Appointment[]
+}
+
+model PetHistory {
+  id          String   @id @default(uuid())
+  petId       String
+  pet         Pet      @relation(fields: [petId], references: [id])
+  tipo        String
+  descricao   String
+  peso        Decimal?
+  observacoes String?
+  createdAt   DateTime @default(now())
+}
+
+model Category {
+  id          String    @id @default(uuid())
+  nome        String    @unique
+  descricao   String?
+  ativo       Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+  products    Product[]
+}
+
+model Product {
+  id             String                @id @default(uuid())
+  categoryId     String
+  category       Category              @relation(fields: [categoryId], references: [id])
+  nome           String
+  descricao      String?
+  SKU            String                @unique
+  precoAtual     Decimal
+  estoqueAtual   Int                   @default(0)
+  estoqueMinimo  Int                   @default(5)
+  ativo          Boolean               @default(true)
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+  deletedAt      DateTime?
+  priceHistory   ProductPriceHistory[]
+  stockMovements StockMovement[]
+  saleItems      SaleItem[]
+}
+
+model ProductPriceHistory {
+  id            String   @id @default(uuid())
+  productId     String
+  product       Product  @relation(fields: [productId], references: [id])
+  price         Decimal
+  previousPrice Decimal
+  changedAt     DateTime @default(now())
+  reason        String?
+}
+
+model StockMovement {
+  id               String   @id @default(uuid())
+  productId        String
+  product          Product  @relation(fields: [productId], references: [id])
+  tipo             String
+  quantidade       Int
+  estoqueAnterior  Int
+  estoquePosterior Int
+  motivo           String
+  referencia       String?
+  createdAt        DateTime @default(now())
+}
+
+model Service {
+  id                String        @id @default(uuid())
+  nome              String        @unique
+  descricao         String?
+  precoAtual        Decimal
+  duracaoEmMinutos  Int
+  ativo             Boolean       @default(true)
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  deletedAt         DateTime?
+  appointments      Appointment[]
+  saleItems         SaleItem[]
+}
+
+model Employee {
+  id           String        @id @default(uuid())
+  nome         String
+  telefone     String
+  email        String        @unique
+  cargo        String
+  ativo        Boolean       @default(true)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  deletedAt    DateTime?
+  appointments Appointment[]
+}
+
+model Appointment {
+  id          String    @id @default(uuid())
+  customerId  String
+  customer    Customer  @relation(fields: [customerId], references: [id])
+  petId       String
+  pet         Pet       @relation(fields: [petId], references: [id])
+  serviceId   String
+  service     Service   @relation(fields: [serviceId], references: [id])
+  employeeId  String
+  employee    Employee  @relation(fields: [employeeId], references: [id])
+  data        DateTime
+  horaInicio  String
+  horaFim     String
+  status      String
+  observacoes String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+}
+
+model Sale {
+  id                String     @id @default(uuid())
+  customerId        String
+  customer          Customer   @relation(fields: [customerId], references: [id])
+  subtotal          Decimal
+  desconto          Decimal    @default(0)
+  total             Decimal
+  metodoDePagamento String
+  status            String
+  observacoes       String?
+  dataDaVenda       DateTime   @default(now())
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  items             SaleItem[]
+}
+
+model SaleItem {
+  id             String   @id @default(uuid())
+  saleId         String
+  sale           Sale     @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  productId      String?
+  product        Product? @relation(fields: [productId], references: [id])
+  serviceId      String?
+  service        Service? @relation(fields: [serviceId], references: [id])
+  nome           String
+  quantidade     Int
+  precoUnitario  Decimal
+  desconto       Decimal  @default(0)
+  subtotal       Decimal
+}
