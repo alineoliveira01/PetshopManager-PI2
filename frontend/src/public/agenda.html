@@ -1,9 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agenda</title>
+    <head>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    
+</head>
     <link rel="stylesheet" href="agenda.css">
 </head>
 
@@ -11,120 +16,220 @@
 
 <div class="layout-agenda">
 
-    <aside class="busca-agenda">
-        <h3>Buscar cliente</h3>
+    <!-- CABEÇALHO -->
+    <header class="cabecalho-principal">
+        <h1>AGENDA</h1>
+    </header>
 
-        <input type="text" id="campoBuscaAgenda" placeholder="Nome, telefone ou CPF/CNPJ">
+   <!-- BUSCA DE CLIENTE -->
+<div class="busca-agenda">
+    <input type="text" id="campoBuscaAgenda"
+        placeholder="NOME, TELEFONE OU CPF/CNPJ">
 
-        <button type="button" id="btnPesquisarAgenda">Pesquisar</button>
+   <button type="button" id="btnPesquisarAgenda" title="BUSCAR CLIENTE">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="10" cy="10" r="6"></circle>
+        <line x1="14.5" y1="14.5" x2="20" y2="20"></line>
+    </svg>
+</button>
 
-        <div id="resultadoBuscaAgenda"></div>
-    </aside>
-
-    <section class="calendario-dia">
-
-        <div class="hora">
-    <span class="horario">08:00</span>
-    <div class="espaco-hora">
-        <div class="divisao divisao-15"></div>
-        <div class="divisao divisao-30"></div>
-        <div class="divisao divisao-45"></div>
-    </div>
+    <div id="resultadoBuscaAgenda"></div>
 </div>
 
-<div class="hora">
-    <span class="horario">09:00</span>
-    <div class="espaco-hora">
-        <div class="divisao divisao-15"></div>
-        <div class="divisao divisao-30"></div>
-        <div class="divisao divisao-45"></div>
-    </div>
+    <!-- AGENDA GERAL -->
+    <section id="agendaGeral">
+
+        <div class="navegacao-semana">
+            <button type="button" id="btnSemanaAnterior">←</button>
+            <button type="button" id="btnProximaSemana">→</button>
+        </div>
+
+        <div class="calendario-semana">
+
+            <div class="cabecalho-semana">
+                <div class="coluna-horario"></div>
+
+                <div class="dia">
+                    <span>SEG</span>
+                    <small id="dataSegunda"></small>
+                </div>
+
+                <div class="dia">
+                    <span>TER</span>
+                    <small id="dataTerca"></small>
+                </div>
+
+                <div class="dia">
+                    <span>QUA</span>
+                    <small id="dataQuarta"></small>
+                </div>
+
+                <div class="dia">
+                    <span>QUI</span>
+                    <small id="dataQuinta"></small>
+                </div>
+
+                <div class="dia">
+                    <span>SEX</span>
+                    <small id="dataSexta"></small>
+                </div>
+
+                <div class="dia">
+                    <span>SÁB</span>
+                    <small id="dataSabado"></small>
+                </div>
+
+                <div class="dia">
+                    <span>DOM</span>
+                    <small id="dataDomingo"></small>
+                </div>
+                <div class="camada-agendamentos" id="camadaAgendamentos"></div>
+            </div>
+
+            <div class="linha-agenda">
+                <div class="horario">08:00</div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+            </div>
+
+            <div class="linha-agenda">
+                <div class="horario">09:00</div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+            </div>
+
+            <div class="linha-agenda">
+                <div class="horario">10:00</div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+            </div>
+
+            <div class="linha-agenda">
+                <div class="horario">11:00</div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+            </div>
+
+            <div class="linha-agenda">
+                <div class="horario">12:00</div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+            </div>
+
+            <div class="linha-agenda">
+                <div class="horario">13:00</div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+            </div>
+
+            <div class="linha-agenda">
+                <div class="horario">14:00</div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+            </div>
+
+            <div class="linha-agenda">
+                <div class="horario">15:00</div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+            </div>
+
+            <div class="linha-agenda">
+                <div class="horario">16:00</div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+            </div>
+
+            <div class="linha-agenda">
+                <div class="horario">17:00</div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+            </div>
+
+            <div class="linha-agenda">
+                <div class="horario">18:00</div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- AGENDA DIÁRIA -->
+    <section id="agendaDiaria">
+        <div class="navegacao-dia">
+            <button type="button" id="btnDiaAnterior">←</button>
+
+            <div class="data-agenda">
+                <strong id="dataAtual"></strong>
+                <span id="diaSemana"></span>
+            </div>
+
+            <button type="button" id="btnProximoDia">→</button>
+        </div>
+
+        <div class="calendario-dia">
+        </div>
+    </section>
+
 </div>
 
-<div class="hora">
-    <span class="horario">10:00</span>
-    <div class="espaco-hora">
-        <div class="divisao divisao-15"></div>
-        <div class="divisao divisao-30"></div>
-        <div class="divisao divisao-45"></div>
-    </div>
-</div>
+<script src="agenda.js"></script>
 
-<div class="hora">
-    <span class="horario">11:00</span>
-    <div class="espaco-hora">
-        <div class="divisao divisao-15"></div>
-        <div class="divisao divisao-30"></div>
-        <div class="divisao divisao-45"></div>
-    </div>
-</div>
+    </section>
 
-<div class="hora">
-    <span class="horario">12:00</span>
-    <div class="espaco-hora">
-        <div class="divisao divisao-15"></div>
-        <div class="divisao divisao-30"></div>
-        <div class="divisao divisao-45"></div>
-    </div>
-</div>
-
-<div class="hora">
-    <span class="horario">13:00</span>
-    <div class="espaco-hora">
-        <div class="divisao divisao-15"></div>
-        <div class="divisao divisao-30"></div>
-        <div class="divisao divisao-45"></div>
-    </div>
-</div>
-
-<div class="hora">
-    <span class="horario">14:00</span>
-    <div class="espaco-hora">
-        <div class="divisao divisao-15"></div>
-        <div class="divisao divisao-30"></div>
-        <div class="divisao divisao-45"></div>
-    </div>
-</div>
-
-<div class="hora">
-    <span class="horario">15:00</span>
-    <div class="espaco-hora">
-        <div class="divisao divisao-15"></div>
-        <div class="divisao divisao-30"></div>
-        <div class="divisao divisao-45"></div>
-    </div>
-</div>
-
-<div class="hora">
-    <span class="horario">16:00</span>
-    <div class="espaco-hora">
-        <div class="divisao divisao-15"></div>
-        <div class="divisao divisao-30"></div>
-        <div class="divisao divisao-45"></div>
-    </div>
-</div>
-
-<div class="hora">
-    <span class="horario">17:00</span>
-    <div class="espaco-hora">
-        <div class="divisao divisao-15"></div>
-        <div class="divisao divisao-30"></div>
-        <div class="divisao divisao-45"></div>
-    </div>
-</div>
-
-<div class="hora">
-    <span class="horario">18:00</span>
-    <div class="espaco-hora">
-        <div class="divisao divisao-15"></div>
-        <div class="divisao divisao-30"></div>
-        <div class="divisao divisao-45"></div>
-    </div>
-</div>
-
-   </section>
-
-</div>
-
-</body>
-</html>

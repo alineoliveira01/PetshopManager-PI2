@@ -1,141 +1,299 @@
-/* GRADE DE HORÁRIOS */
-.calendario-dia {
-    width: 700px;
-    margin-left: auto;
-    margin-right: auto;
-    border: 2px solid #8bbec5;
-    border-radius: 8px;
-    overflow: hidden;
+/* CABEÇALHO DA AGENDA */
+body {
+    font-family: "Roboto", sans-serif;
 }
 
-.hora {
-    display: grid;
-    grid-template-columns: 70px 1fr;
-    height: 140px;
-    border-bottom: 1px solid #8bbec5;
+.cabecalho-principal {
+    text-align: center;   
+    
 }
 
-.hora:last-child {
-    border-bottom: none;
+.cabecalho-principal h1 {
+    margin: 0 0 15px;
+ 
 }
 
-.hora:nth-child(odd) {
-    background-color: #ffffff;
+
+/* NAVEGAÇÃO DA SEMANA */
+
+.navegacao-semana {
+    display: flex;
+    justify-content: space-between;
+    width: 1200px;
+    max-width: calc(100% - 40px);
+    margin: 0 auto 5px;
 }
 
-.hora:nth-child(even) {
-    background-color: #DFEFF5;
-}
-
-.horario {
-    padding: 10px;
-    text-align: right;
-    font-size: 13px;
+.navegacao-semana button,
+.navegacao-dia button {
+    width: 35px;
+    height: 30px;
+    border: 1px solid #74a5b7;
+    border-radius: 5px;
+    background-color: #8bbec5;
+    font-size: 18px;
     font-weight: bold;
-    border-right: 1px solid #8bbec5;
 }
 
-.espaco-hora {
-    position: relative;
+
+/* DATAS DOS DIAS */
+
+.dia {
+    flex-direction: column;
+    gap: 1px;
 }
 
-/* DIVISÕES DE 15 MINUTOS */
-.espaco-hora {
-    position: relative;
+.dia span {
+    line-height: 15px;
 }
 
-.divisao {
-    position: absolute;
-    left: 0;
-    right: 0;
+.dia small {
+    font-size: 13px;
+    font-weight: 500;
+   
 }
 
-.divisao-15 {
-    top: 25%;
-    border-top: 1px dotted #8bbec5;
+
+/* NAVEGAÇÃO DIÁRIA */
+
+.navegacao-dia {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 10px;
 }
 
-.divisao-30 {
-    top: 50%;
-    border-top: 1px solid #8bbec5;
+.data-agenda {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.divisao-45 {
-    top: 75%;
-    border-top: 1px dotted #8bbec5;
+.data-agenda strong {
+    font-size: 15px;
 }
 
-.layout-agenda { 
-    position: relative;
-    width: 100%; 
-    padding: 20px; 
-    box-sizing: border-box; 
-} 
- 
-.busca-agenda h3 { 
-    margin: 0 0 20px; 
-    font-size: 20px; 
-} 
- 
-.busca-agenda { 
-    width: 400px; 
-    padding: 18px; 
+.data-agenda span {
+    font-size: 12px;
+    font-weight: bold;
+}
+/* GRADE DE HORÁRIOS */ 
+
+.calendario-semana { 
+    width: 1200px; 
+    margin-left: auto; 
+    margin-right: auto; 
     border: 2px solid #8bbec5; 
     border-radius: 8px; 
-    text-align: center; 
-    box-sizing: border-box; 
-} 
- 
-.busca-agenda input { 
-    display: inline-block;
-    width: calc(100% - 110px); 
-    height: 40px; 
-    padding: 6px 8px; 
-    box-sizing: border-box; 
-    border: 1px solid #8bbec5; 
-    border-radius: 5px; 
-    vertical-align: middle;
-} 
- 
-.busca-agenda button { 
-    display: inline-block;
-    width: 100px; 
-    height: 40px; 
-    margin-top: 0; 
-    margin-left: 6px;
-    background-color: #8bbec5; 
-    border: 1px solid #74a5b7; 
-    border-radius: 5px; 
-    font-size: 15px; 
-    vertical-align: middle;
+    overflow: hidden; 
+    box-sizing: border-box;
 } 
 
-.calendario-dia {
-    position: absolute;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 700px;
-    border: 2px solid #8bbec5;
-    border-radius: 8px;
-    overflow: hidden;
+.cabecalho-semana { 
+    display: grid; 
+    grid-template-columns: 55px repeat(7, 1fr); 
+    height: 30px; 
+    border-bottom: 1px solid #8bbec5; 
+} 
+
+.coluna-horario { 
+    border-right: 1px solid #8bbec5; 
+} 
+
+.dia { 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1px;
+    font-size: 14px;
+    font-weight: bold;
+    text-shadow: 1px 1px 1px #babebe;
+    border-right: 1px solid #8bbec5;
+    background-color: #74a5b7;  
+} 
+
+.dia:last-child { 
+    border-right: none; 
+} 
+
+.linha-agenda { 
+    display: grid; 
+    grid-template-columns: 55px repeat(7, 1fr); 
+    height: 80px; 
+    border-bottom: 1px solid #8bbec5; 
+} 
+
+.linha-agenda:last-child { 
+    border-bottom: none; 
+} 
+
+.linha-agenda:nth-child(odd) { 
+    background-color: #ffffff; 
+} 
+
+.linha-agenda:nth-child(even) { 
+    background-color: #DFEFF5; 
+} 
+
+.horario { 
+    padding: 8px; 
+    text-align: center; 
+    font-size: 14px; 
+    font-weight: bold; 
+    text-shadow:1px 1px 1px #babebe;
+    border-right: 1px solid #8bbec5; 
+} 
+
+.espaco-dia { 
+    position: relative; 
+    border-right: 1px solid #8bbec5; 
+} 
+
+.espaco-dia:last-child { 
+    border-right: none; 
+} 
+
+/* DIVISÕES DE 15 MINUTOS */ 
+
+.divisao { 
+    position: absolute; 
+    left: 0; 
+    right: 0; 
+} 
+
+.divisao-15 { 
+    top: 25%; 
+    border-top: 1px dotted #8bbec5; 
+} 
+
+.divisao-30 { 
+    top: 50%; 
+    border-top: 1px solid #8bbec5; 
+} 
+
+.divisao-45 { 
+    top: 75%; 
+    border-top: 1px dotted #8bbec5; 
 }
  
-@media (max-width: 1100px) { 
-    .layout-agenda { 
+.layout-agenda {    
+    position: relative;  
+    width: 100%;    
+    padding: 20px;    
+    box-sizing: border-box;    
+}   
+#agendaGeral,
+#agendaDiaria {
+    width: 100%;
+} 
+    
+/* BUSCA DE CLIENTE */
+
+.busca-agenda {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 300px;
+    max-width: 100%;
+    margin: 0 auto 20px;
+}
+
+.busca-agenda input {
+    flex: 1;
+    width: auto;
+    height: 36px;
+    padding: 4px 6px;
+    box-sizing: border-box;
+    border: 1px solid #8bbec5;
+    border-radius: 5px;
+}
+
+.busca-agenda button {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #8bbec5;
+    border: 1px solid #74a5b7;
+    border-radius: 5px;
+}
+
+.busca-agenda button svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: #285665;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+}
+  
+@media (max-width: 1240px) {
+    .layout-agenda {
         display: flex;
-        flex-direction: column; 
-        align-items: center; 
-    } 
- 
-    .busca-agenda, 
-    .calendario-dia { 
-        width: 100%; 
-        max-width: 700px; 
+        flex-direction: column;
+        align-items: center;
     }
 
-    .calendario-dia {
-        position: static;
-        transform: none;
+    .busca-agenda {
+        width: 300px;
+        max-width: calc(100% - 40px);
     }
+
+    .calendario-semana {
+        width: calc(100% - 40px);
+        max-width: 1200px;
+        min-width: 0;
+        flex-shrink: 0;
+    }
+    .navegacao-semana {
+    width: calc(100% - 40px);
+    max-width: 1200px;
+}
+}
+/* TESTE DE AGENDAMENTO */
+
+.agendamento-teste small {
+    font-size: 10px;
+}
+/* CAMADA DE AGENDAMENTOS */
+
+.calendario-semana {
+    position: relative;
+}
+
+.camada-agendamentos {
+    position: absolute;
+    top: 30px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    grid-template-columns: 55px repeat(7, 1fr);
+    grid-template-rows: repeat(11, 80px);
+    z-index: 10;
+    pointer-events: none;
+}
+
+/* TESTE DE AGENDAMENTO */
+
+.agendamento-teste {
+    position: relative;
+    margin: 4px;
+    padding: 4px;
+    box-sizing: border-box;
+    background-color: #8bbec5;
+    border: 1px solid #74a5b7;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #285665;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
