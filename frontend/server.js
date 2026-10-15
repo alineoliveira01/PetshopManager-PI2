@@ -1,9 +1,10 @@
 import express from 'express';
 import sqlite3 from 'sqlite3';
-
+import cors from 'cors';
 const app = express();
 const PORT = 3000;
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("./src/public"));

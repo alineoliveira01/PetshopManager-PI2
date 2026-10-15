@@ -17,9 +17,32 @@
 <div class="layout-agenda">
 
     <!-- CABEÇALHO -->
-    <header class="cabecalho-principal">
-        <h1>AGENDA</h1>
-    </header>
+   
+<header class="cabecalho-principal">
+    <h1>AGENDA</h1>
+
+  
+
+
+
+<button
+    type="button"
+    id="btnConfiguracoesAgenda"
+    class="botao-configuracoes"
+    title="CONFIGURAÇÕES DA AGENDA"
+    aria-label="Configurações da agenda">
+
+   
+<svg viewBox="0 0 24 24" aria-hidden="true">
+    <g transform="translate(12 12)">
+        <path d="M-2.2-9h4.4l.5 2.1 1.5.9 2-.9 2.2 3.8-1.7 1.5v1.8l1.7 1.5-2.2 3.8-2-.9-1.5.9L2.2 9h-4.4l-.5-2.1-1.5-.9-2 .9-2.2-3.8 1.7-1.5v-1.8l-1.7-1.5 2.2-3.8 2 .9 1.5-.9Z"/>
+        <circle r="3"/>
+    </g>
+</svg>
+
+</button>
+
+</header>
 
    <!-- BUSCA DE CLIENTE -->
 <div class="busca-agenda">
@@ -36,7 +59,65 @@
     <div id="resultadoBuscaAgenda"></div>
 </div>
 
-    <!-- AGENDA GERAL -->
+      <!-- AGENDA GERAL -->
+<div class="area-agenda">
+
+    <aside class="lateral-categorias">
+        <h2>ACESSO RÁPIDO</h2>
+
+<div class="categoria-servico">
+    <span class="cor-categoria cor-categoria-1">1</span>
+    <span>BANHO</span>
+</div>
+
+<div class="categoria-servico">
+    <span class="cor-categoria cor-categoria-2">2</span>
+    <span>TOSA</span>
+</div>
+
+<div class="categoria-servico">
+    <span class="cor-categoria cor-categoria-3">3</span>
+    <span>TOSA HIGIÊNICA</span>
+</div>
+
+<div class="categoria-servico">
+    <span class="cor-categoria cor-categoria-4">4</span>
+    <span>TOSA MANUAL</span>
+</div>
+
+<div class="categoria-servico">
+    <span class="cor-categoria cor-categoria-5">5</span>
+    <span>OUTRA CATEGORIA</span>
+</div>
+
+<div class="categoria-servico">
+    <span class="cor-categoria cor-categoria-6">6</span>
+    <span>OUTRA CATEGORIA</span>
+</div>
+
+<div class="categoria-servico">
+    <span class="cor-categoria cor-categoria-7">7</span>
+    <span>OUTRA CATEGORIA</span>
+</div>
+
+<div class="categoria-servico">
+    <span class="cor-categoria cor-categoria-8">8</span>
+    <span>OUTRA CATEGORIA</span>
+</div>
+
+<div class="categoria-servico">
+    <span class="cor-categoria cor-categoria-9">9</span>
+    <span>OUTRA CATEGORIA</span>
+</div>
+
+<div class="categoria-servico">
+    <span class="cor-categoria cor-categoria-10">10</span>
+    <span>OUTRA CATEGORIA</span>
+</div>
+
+
+    </aside>
+
     <section id="agendaGeral">
 
         <div class="navegacao-semana">
@@ -83,7 +164,7 @@
                     <span>DOM</span>
                     <small id="dataDomingo"></small>
                 </div>
-                <div class="camada-agendamentos" id="camadaAgendamentos"></div>
+             
             </div>
 
             <div class="linha-agenda">
@@ -207,10 +288,36 @@
                 <div class="espaco-dia"></div>
             </div>
 
-        </div>
-    </section>
+            <div class="linha-agenda">
+                <div class="horario">19:00</div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+            </div>
 
-    <!-- AGENDA DIÁRIA -->
+            <div class="linha-agenda">
+                <div class="horario">20:00</div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+                <div class="espaco-dia"></div>
+            </div>
+
+
+            <div class="camada-agendamentos" id="camadaAgendamentos"></div>  
+        </div>
+       </section>
+
+</div>
+
+<!-- AGENDA DIÁRIA -->
     <section id="agendaDiaria">
         <div class="navegacao-dia">
             <button type="button" id="btnDiaAnterior">←</button>
@@ -228,7 +335,87 @@
     </section>
 
 </div>
+<!-- JANELA DO AGENDAMENTO -->
 
+<div class="janela-agendamento" id="janelaAgendamento">
+
+    <div class="conteudo-agendamento">
+
+        <button type="button" class="fechar-agendamento" id="fecharAgendamento">
+            ×
+        </button>
+
+        <h2>AGENDAMENTO</h2>
+
+<div class="info-agendamento">
+    <strong>CLIENTE</strong>
+    <span id="infoCliente"></span>
+    <input type="text" id="editarCliente">
+</div>
+
+<div class="info-agendamento">
+    <strong>PET</strong>
+    <span id="infoPet"></span>
+    <input type="text" id="editarPet">
+</div>
+
+<div class="info-agendamento">
+    <strong>SERVIÇO</strong>
+    <span id="infoServico"></span>
+    <input type="text" id="editarServico">
+</div>
+
+<div class="info-agendamento">
+    <strong>HORÁRIO</strong>
+    <span id="infoHorario"></span>
+    <input type="time" id="editarInicio">
+</div>
+
+    <div class="botoes-agendamento">
+        <button type="button" id="btnEditarAgendamento">EDITAR</button>
+    </div>
+    
+ </div>
+
+</div>
+
+<!-- JANELA DE CONFIGURAÇÕES DA AGENDA -->
+
+<div class="janela-agendamento" id="janelaConfiguracoes">
+
+    <div class="conteudo-agendamento configuracoes-agenda">
+
+        <button type="button" class="fechar-agendamento"
+            id="fecharConfiguracoes">×</button>
+
+        <h2>CONFIGURAÇÕES DA AGENDA</h2>
+
+       
+<div class="configuracao-secao">
+    <h3>HORÁRIOS DE FUNCIONAMENTO</h3>
+
+    <label for="horarioInicial">Horário inicial</label>
+    <select id="horarioInicial"></select>
+
+    <label for="horarioFinal">Horário final</label>
+    <select id="horarioFinal"></select>
+</div>
+
+        <div class="configuracao-secao">
+            <h3>SERVIÇOS E CORES</h3>
+            <div id="listaConfiguracaoServicos"></div>
+        </div>
+
+        <div class="botoes-agendamento">
+            <button type="button" id="btnSalvarConfiguracoes">
+                SALVAR
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<script src="maiusculas.js"></script>
 <script src="agenda.js"></script>
 
     </section>
