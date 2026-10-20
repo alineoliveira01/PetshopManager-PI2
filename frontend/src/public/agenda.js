@@ -4,24 +4,26 @@
 let dataReferencia = new Date();
 let agendamentoSelecionado = null;
 let modoEdicao = false;
+let criandoNovoAgendamento = false;
 
 
 /* SERVIÇOS E CONFIGURAÇÕES */
 
 const servicosPadrao = [
-    { codigo: 1, nome: "BANHO", cor: "#ADD8E6" },
-    { codigo: 2, nome: "TOSA", cor: "#F5D76E" },
-    { codigo: 3, nome: "TOSA HIGIÊNICA", cor: "#A9D6A0" },
-    { codigo: 4, nome: "TOSA MANUAL", cor: "#F4B66A" },
-    { codigo: 5, nome: "OUTRA CATEGORIA", cor: "#CDB8E8" },
-    { codigo: 6, nome: "OUTRA CATEGORIA", cor: "#EDB6CC" },
-    { codigo: 7, nome: "OUTRA CATEGORIA", cor: "#A8DCD7" },
-    { codigo: 8, nome: "OUTRA CATEGORIA", cor: "#F2B5A7" },
-    { codigo: 9, nome: "OUTRA CATEGORIA", cor: "#B8CCF0" },
-    { codigo: 10, nome: "OUTRA CATEGORIA", cor: "#D9DEE3" }
+    { codigo: 1, nome: "BANHO", cor: "#B5DFF0" , duracaoPadrao: 30 },
+    { codigo: 2, nome: "TOSA", cor: "#F5DEA0" , duracaoPadrao: 30 },
+    { codigo: 3, nome: "TOSA HIGIÊNICA", cor: "#B9D9A8" , duracaoPadrao: 30 },
+    { codigo: 4, nome: "TOSA PREMIUM", cor: "#F2A5A0" , duracaoPadrao: 30 },
+    { codigo: 5, nome: "OUTRA CATEGORIA", cor: "#80D5CC" , duracaoPadrao: 30 },
+    { codigo: 6, nome: "OUTRA CATEGORIA", cor: "#CBB9E8" , duracaoPadrao: 30 },
+    { codigo: 7, nome: "OUTRA CATEGORIA", cor: "#EDB9CB" , duracaoPadrao: 30 },
+    { codigo: 8, nome: "OUTRA CATEGORIA", cor: "#F4B16D", duracaoPadrao: 30  },
+    { codigo: 9, nome: "OUTRA CATEGORIA", cor: "#83C8F0" , duracaoPadrao: 30 },
+    { codigo: 10, nome: "OUTRA CATEGORIA", cor: "#e6e5d8", duracaoPadrao: 30  }
 ];
 
 const CHAVE_CONFIGURACOES = "agendaConfiguracoes";
+
 
 function carregarConfiguracoes() {
     try {
@@ -33,6 +35,7 @@ function carregarConfiguracoes() {
             return {
                 horarioInicial: salvas.horarioInicial || "08:00",
                 horarioFinal: salvas.horarioFinal || "20:00",
+
                 servicos: servicosPadrao.map(padrao => {
                     const salvo = salvas.servicos?.find(
                         item => item.codigo === padrao.codigo
@@ -40,21 +43,33 @@ function carregarConfiguracoes() {
 
                     return {
                         ...padrao,
-                        nome: salvo?.nome || padrao.nome
+                        nome: salvo?.nome || padrao.nome,
+                        cor: salvo?.cor || padrao.cor,
+                        duracaoPadrao:
+                            Number(salvo?.duracaoPadrao) ||
+                            Number(padrao.duracaoPadrao) ||
+                            30
                     };
                 })
             };
         }
     } catch (erro) {
-        console.warn("Não foi possível carregar as configurações.", erro);
+        console.warn(
+            "Não foi possível carregar as configurações.",
+            erro
+        );
     }
 
     return {
         horarioInicial: "08:00",
         horarioFinal: "20:00",
-        servicos: servicosPadrao.map(servico => ({ ...servico }))
+        servicos: servicosPadrao.map(servico => ({
+            ...servico,
+            duracaoPadrao: Number(servico.duracaoPadrao) || 30
+        }))
     };
 }
+
 
 let configuracoesAgenda = carregarConfiguracoes();
 let servicosConfigurados = configuracoesAgenda.servicos;
@@ -139,16 +154,19 @@ document.getElementById("btnSemanaAnterior")
         atualizarSemana();
     });
 
+
 document.getElementById("btnProximaSemana")
     .addEventListener("click", () => {
+        console.log("CLIQUE NA PRÓXIMA SEMANA");
+
         dataReferencia.setDate(dataReferencia.getDate() + 7);
         atualizarSemana();
+
+        console.log("DATA DE REFERÊNCIA:", dataReferencia);
     });
 
+console.log("NAVEGAÇÃO SEMANAL CARREGADA");
 atualizarSemana();
-
-/* AGENDAMENTOS DE TESTE */
-
 
 /* AGENDAMENTOS SALVOS */
 
@@ -227,13 +245,13 @@ function atualizarBloco(agendamento) {
     if (!bloco) return;
 
     const servico = identificarServico(
-        agendamento.codigoServico != null
-            ? String(agendamento.codigoServico)
-            : agendamento.servico
-    );
+    agendamento.codigoServico != null
+        ? String(agendamento.codigoServico)
+        : agendamento.servico
+);
 
-    // Mantém o nome digitado se for um serviço personalizado.
-    const categoria = servicosConfigurados.find(
+// Mantém o nome digitado se for um serviço personalizado.
+const categoria = servicosConfigurados.find(
     item => item.codigo === agendamento.codigoServico
 );
 
@@ -241,7 +259,7 @@ const nomeServico = categoria
     ? categoria.nome
     : agendamento.servico || servico.nome;
 
-    bloco.replaceChildren();
+bloco.replaceChildren();
 
     const titulo = document.createElement("strong");
     titulo.textContent =
@@ -268,27 +286,29 @@ const nomeServico = categoria
         : "#74a5b7";
 
     const [hora, minuto] = agendamento.inicio
+    .split(":")
+    .map(Number);
+
+const [horaInicial, minutoInicial] =
+    configuracoesAgenda.horarioInicial
         .split(":")
         .map(Number);
 
-    const horaInicial = Number(
-    configuracoesAgenda.horarioInicial.split(":")[0]
-);
-
 const minutosDesdeInicio =
-    (hora - horaInicial) * 60 + minuto;
+    (hora * 60 + minuto) -
+    (horaInicial * 60 + minutoInicial);
 
-    bloco.style.marginTop =
-        `${(minutosDesdeInicio / 60) * 80}px`;
+bloco.style.marginTop =
+    `${(minutosDesdeInicio / 60) * 120 }px`;
 
-    bloco.style.height =
-        `${(agendamento.duracao / 60) * 80}px`;
-}
-
+bloco.style.height =
+    `${(agendamento.duracao / 60) * 120}px`;
+    }
 /* ABRE A JANELA DE AGENDAMENTO */
 
 function abrirAgendamento(agendamento) {
     agendamentoSelecionado = agendamento;
+    criandoNovoAgendamento = false;
 
     document.getElementById("infoCliente").textContent =
         agendamento.cliente;
@@ -306,10 +326,20 @@ function abrirAgendamento(agendamento) {
             agendamento.duracao
         );
 
+    // CALCULAR A DATA DO AGENDAMENTO
+    const dataSemana = inicioDaSemana(dataReferencia);
+    const dataSelecionada = new Date(dataSemana);
+
+    dataSelecionada.setDate(
+        dataSemana.getDate() + agendamento.dia - 1
+    );
+
+    document.getElementById("infoData").textContent =
+        dataSelecionada.toLocaleDateString("pt-BR");
+
     document.getElementById("janelaAgendamento").style.display =
         "flex";
 }
-
 /* CRIA OS AGENDAMENTOS */
 
 function criarAgendamentosTeste() {
@@ -332,7 +362,7 @@ function criarAgendamentosTeste() {
         camada.appendChild(bloco);
 
         bloco.addEventListener("click", () => {
-            abrirAgendamento(agendamento);
+        abrirAgendamento(agendamento);
         });
     });
 }
@@ -356,6 +386,9 @@ criarDivisoes15Minutos();
 
 /* MOSTRA OU ESCONDE OS CAMPOS DE EDIÇÃO */
 
+
+/* MOSTRA OU ESCONDE OS CAMPOS DE EDIÇÃO */
+
 function definirModoEdicao(editar) {
     document.querySelectorAll(".info-agendamento span")
         .forEach(elemento => {
@@ -370,8 +403,12 @@ function definirModoEdicao(editar) {
     document.getElementById("btnEditarAgendamento").textContent =
         editar ? "SALVAR" : "EDITAR";
 
+    // MOSTRA OU ESCONDE O BOTÃO CANCELAR EDIÇÃO
+    document.getElementById("btnCancelarEdicao").hidden = !editar;
+    document.getElementById("btnExcluirAgendamento").hidden = editar;    
     modoEdicao = editar;
 }
+
 
 /* EDITAR E SALVAR */
 
@@ -418,9 +455,37 @@ document.getElementById("btnEditarAgendamento")
         agendamentoSelecionado.inicio = inicio;
         agendamentoSelecionado.servico = servico.nome;
         agendamentoSelecionado.codigoServico = servico.codigo;
+        agendamentoSelecionado.duracao =
+            servico.duracaoPadrao || 30;
 
-        atualizarBloco(agendamentoSelecionado);
-        salvarAgendamentos();
+       if (criandoNovoAgendamento) {
+    const agendamento = agendamentoSelecionado;
+
+    agendamentosTeste.push(agendamento);
+
+    const camada = document.getElementById("camadaAgendamentos");
+    const bloco = document.createElement("div");
+
+    bloco.className = "agendamento-teste";
+    bloco.dataset.agendamentoId = agendamentosTeste.length - 1;
+
+    agendamento.bloco = bloco;
+
+    bloco.style.gridColumn = agendamento.dia + 1;
+    bloco.style.gridRow = "1 / -1";
+    bloco.style.margin = "0 4px";
+
+    bloco.addEventListener("click", () => {
+        abrirAgendamento(agendamento);
+    });
+
+    camada.appendChild(bloco);
+
+    criandoNovoAgendamento = false;
+}
+
+    atualizarBloco(agendamentoSelecionado);
+    salvarAgendamentos();
 
         document.getElementById("infoCliente").textContent =
             agendamentoSelecionado.cliente;
@@ -442,6 +507,89 @@ document.getElementById("btnEditarAgendamento")
 
         document.getElementById("janelaAgendamento").style.display =
             "none";
+    });
+    
+/* EXCLUIR AGENDAMENTO */
+
+document.getElementById("btnExcluirAgendamento")
+    .addEventListener("click", () => {
+        if (!agendamentoSelecionado) return;
+
+        const confirmar = confirm(
+            "DESEJA REALMENTE EXCLUIR ESTE AGENDAMENTO?"
+        );
+
+        if (!confirmar) return;
+
+        const indice = agendamentosTeste.indexOf(
+            agendamentoSelecionado
+        );
+
+        if (indice === -1) {
+            alert("NÃO FOI POSSÍVEL LOCALIZAR O AGENDAMENTO.");
+            return;
+        }
+
+        // REMOVE O BLOCO DA AGENDA
+        if (agendamentoSelecionado.bloco) {
+            agendamentoSelecionado.bloco.remove();
+        }
+
+        // REMOVE O REGISTRO
+        agendamentosTeste.splice(indice, 1);
+
+        // SALVA A ALTERAÇÃO
+        salvarAgendamentos();
+
+        // FECHA A JANELA
+        document.getElementById("janelaAgendamento").style.display =
+            "none";
+
+        // LIMPA A SELEÇÃO
+        agendamentoSelecionado = null;
+
+        definirModoEdicao(false);
+    });
+
+
+/* CANCELAR EDIÇÃO DO AGENDAMENTO */
+
+document.getElementById("btnCancelarEdicao")
+    .addEventListener("click", () => {
+        if (!agendamentoSelecionado) return;
+
+        // RESTAURA OS VALORES ORIGINAIS NOS CAMPOS
+        document.getElementById("editarCliente").value =
+            agendamentoSelecionado.cliente || "";
+
+        document.getElementById("editarPet").value =
+            agendamentoSelecionado.pet || "";
+
+        document.getElementById("editarServico").value =
+            agendamentoSelecionado.servico || "";
+
+        document.getElementById("editarInicio").value =
+            agendamentoSelecionado.inicio || "";
+
+        // RESTAURA AS INFORMAÇÕES EXIBIDAS
+        document.getElementById("infoCliente").textContent =
+            agendamentoSelecionado.cliente || "";
+
+        document.getElementById("infoPet").textContent =
+            agendamentoSelecionado.pet || "";
+
+        document.getElementById("infoServico").textContent =
+            agendamentoSelecionado.servico || "";
+
+        document.getElementById("infoHorario").textContent =
+            `${agendamentoSelecionado.inicio} - ` +
+            calcularHorarioFim(
+                agendamentoSelecionado.inicio,
+                agendamentoSelecionado.duracao
+            );
+
+        // VOLTA AO MODO DE VISUALIZAÇÃO
+        definirModoEdicao(false);
     });
 
 /* FECHAR JANELA */
@@ -474,20 +622,27 @@ function atualizarLegendaServicos() {
     document.querySelectorAll(".categoria-servico").forEach(
         (elemento, indice) => {
             const servico = servicosConfigurados[indice];
+
             if (!servico) return;
 
-            const nome = elemento.querySelector(
-                ".nome-categoria"
-            );
+            // ATUALIZA O NOME
+            const nome = elemento.querySelector(".nome-categoria")
+                || elemento.lastElementChild;
 
             if (nome) {
                 nome.textContent = servico.nome;
-            } else if (elemento.lastElementChild) {
-                elemento.lastElementChild.textContent = servico.nome;
+            }
+
+            // ATUALIZA A COR DO NÚMERO NO MENU LATERAL
+            const identificacao = elemento.querySelector(".cor-categoria");
+
+            if (identificacao) {
+                identificacao.style.backgroundColor = servico.cor;
             }
         }
     );
 }
+
 
 function montarListaConfiguracao() {
     listaConfiguracaoServicos.replaceChildren();
@@ -496,14 +651,23 @@ function montarListaConfiguracao() {
         const linha = document.createElement("div");
         linha.className = "linha-configuracao-servico";
 
+        // NÚMERO DA CATEGORIA
         const identificacao = document.createElement("span");
         identificacao.textContent = servico.codigo;
         identificacao.className = "numero-configuracao-servico";
 
-        const cor = document.createElement("span");
-        cor.className = "amostra-cor-configuracao";
-        cor.style.backgroundColor = servico.cor;
+        // SELETOR DE COR
+        const seletorCor = document.createElement("input");
+        seletorCor.type = "color";
+        seletorCor.value = servico.cor;
+        seletorCor.dataset.corCodigo = servico.codigo;
+        seletorCor.className = "seletor-cor-configuracao";
+        seletorCor.setAttribute(
+            "aria-label",
+            `Cor da categoria ${servico.codigo}`
+        );
 
+        // NOME DO SERVIÇO
         const campo = document.createElement("input");
         campo.type = "text";
         campo.value = servico.nome;
@@ -518,10 +682,30 @@ function montarListaConfiguracao() {
             campo.value = campo.value.toUpperCase();
         });
 
-        linha.append(identificacao, cor, campo);
+        // DURAÇÃO PADRÃO EM MINUTOS
+        const duracao = document.createElement("input");
+        duracao.type = "number";
+        duracao.min = "1";
+        duracao.max = "600";
+        duracao.step = "1";
+        duracao.value = servico.duracaoPadrao ?? 30;
+        duracao.dataset.duracaoCodigo = servico.codigo;
+        duracao.setAttribute(
+            "aria-label",
+            `Duração padrão de ${servico.nome}, em minutos`
+        );
+
+        linha.append(
+            identificacao,
+            seletorCor,
+            campo,
+            duracao
+        );
+
         listaConfiguracaoServicos.appendChild(linha);
     });
 }
+
 
 
 /* OPÇÕES DE HORÁRIO: 08:00 ATÉ 20:00 */
@@ -557,10 +741,29 @@ function abrirConfiguracoes() {
         "horarioFinal",
         configuracoesAgenda.horarioFinal );
 
-    montarListaConfiguracao();
-    janelaConfiguracoes.style.display = "flex";
-}
+   
+montarListaConfiguracao();
 
+janelaConfiguracoes.style.display = "flex";
+
+const botao = document.getElementById("btnConfiguracoesAgenda");
+const painel = janelaConfiguracoes.querySelector(".configuracoes-agenda");
+
+const posicao = botao.getBoundingClientRect();
+
+
+const alturaPainel = painel.offsetHeight;
+const margem = 10;
+
+const topoIdeal = posicao.bottom + 8;
+const topoMaximo = window.innerHeight - alturaPainel - margem;
+
+painel.style.top = `${Math.max(margem, Math.min(topoIdeal, topoMaximo))}px`;
+painel.style.right = "5px";
+painel.style.left = "auto";
+
+
+}
 
 function salvarConfiguracoes() {
     const horarioInicial =
@@ -595,18 +798,43 @@ function salvarConfiguracoes() {
         return;
     }
 
+   
     const novosServicos = [
-        ...listaConfiguracaoServicos.querySelectorAll("input")
+        ...listaConfiguracaoServicos.querySelectorAll("input[data-codigo]")
     ].map(campo => {
+        const codigo = Number(campo.dataset.codigo);
+
         const padrao = servicosPadrao.find(
-            item => item.codigo === Number(campo.dataset.codigo)
+            item => item.codigo === codigo
+        );
+
+        const servicoSalvo = servicosConfigurados.find(
+            item => item.codigo === codigo
+        );
+
+        const seletorCor = listaConfiguracaoServicos.querySelector(
+            `input[data-cor-codigo="${codigo}"]`
+        );
+
+        const campoDuracao = listaConfiguracaoServicos.querySelector(
+            `input[data-duracao-codigo="${codigo}"]`
         );
 
         return {
             ...padrao,
-            nome: campo.value.trim().toUpperCase() || padrao.nome
+            nome: campo.value.trim().toUpperCase()
+                || servicoSalvo?.nome
+                || padrao.nome,
+            cor: seletorCor?.value
+                || servicoSalvo?.cor
+                || padrao.cor,
+            duracaoPadrao: Number(campoDuracao?.value)
+                || servicoSalvo?.duracaoPadrao
+                || padrao.duracaoPadrao
+                || 30
         };
     });
+
 
     configuracoesAgenda = {
         horarioInicial,
@@ -711,6 +939,7 @@ aplicarHorarioFuncionamento();
 
 let clienteSelecionadoAgenda = null;
 let petSelecionadoAgenda = null;
+let cliquesBuscaVazia = 0;
 
 const campoBuscaAgenda =
     document.getElementById("campoBuscaAgenda");
@@ -734,11 +963,18 @@ async function pesquisarClienteAgenda() {
     const busca = campoBuscaAgenda.value.trim();
 
     if (!busca) {
-        alert("DIGITE O NOME, TELEFONE OU CPF/CNPJ DO CLIENTE.");
+        cliquesBuscaVazia++;
+
+        if (cliquesBuscaVazia >= 2) {
+            alert("DIGITE O NOME, TELEFONE OU CPF/CNPJ DO CLIENTE.");
+            cliquesBuscaVazia = 0;
+        }
+
         campoBuscaAgenda.focus();
         return;
     }
 
+    cliquesBuscaVazia = 0;
     clienteSelecionadoAgenda = null;
     petSelecionadoAgenda = null;
     resultadoBuscaAgenda.replaceChildren();
@@ -869,4 +1105,178 @@ async function selecionarClienteAgenda(cliente) {
         listaPets.textContent = "NÃO FOI POSSÍVEL CARREGAR OS PETS.";
     }
 }
+// ABRIR NOVO AGENDAMENTO AO CLICAR NA AGENDA SEMANAL
+
+function abrirNovoAgendamento(dia, horario) {
+    const dataSemana = inicioDaSemana(dataReferencia);
+    const dataSelecionada = new Date(dataSemana);
+
+    dataSelecionada.setDate(
+        dataSemana.getDate() + dia - 1
+    );
+
+    const dataFormatada = dataSelecionada.toLocaleDateString("pt-BR");
+
+    const novoAgendamento = {
+    dia: dia,
+    data: dataFormatada,
+    inicio: horario,
+    duracao: 30,
+    cliente: "",
+    pet: "",
+    servico: "",
+    codigoServico: null
+};
+    if (clienteSelecionadoAgenda && petSelecionadoAgenda) {
+    novoAgendamento.cliente =
+        clienteSelecionadoAgenda.nome.toUpperCase();
+
+    novoAgendamento.pet =
+        petSelecionadoAgenda.nomePet.toUpperCase();
+}
+
+   // TRANSFERE O CLIENTE E O PET SELECIONADOS
+    if (clienteSelecionadoAgenda && petSelecionadoAgenda) {
+    novoAgendamento.cliente =
+        clienteSelecionadoAgenda.nome.toUpperCase();
+
+    novoAgendamento.pet =
+        petSelecionadoAgenda.nomePet.toUpperCase();
+}
+
+agendamentoSelecionado = novoAgendamento;
+criandoNovoAgendamento = true;
+
+    console.log("CLIENTE SELECIONADO:", clienteSelecionadoAgenda);
+console.log("PET SELECIONADO:", petSelecionadoAgenda);
+console.log("NOVO AGENDAMENTO:", novoAgendamento);
+
+    if (clienteSelecionadoAgenda && petSelecionadoAgenda) {
+    agendamentoSelecionado.cliente =
+        clienteSelecionadoAgenda.nome.toUpperCase();
+
+    agendamentoSelecionado.pet =
+        petSelecionadoAgenda.nomePet.toUpperCase();
+}
+
+    document.getElementById("infoCliente").textContent = "";
+    document.getElementById("infoPet").textContent = "";
+    document.getElementById("infoServico").textContent = "";
+
+    // DATA E HORÁRIO SELECIONADOS
+    document.getElementById("infoData").textContent = dataFormatada;
+    document.getElementById("infoHorario").textContent = horario;
+
+    document.getElementById("editarCliente").value = novoAgendamento.cliente;
+
+    document.getElementById("editarPet").value = novoAgendamento.pet;
+    document.getElementById("editarServico").value = "";
+    document.getElementById("editarInicio").value = horario;
+
+    document.getElementById("janelaAgendamento").style.display = "flex";
+
+    definirModoEdicao(true);
+
+    // MANTER A DATA VISÍVEL DURANTE A EDIÇÃO//
+    document.getElementById("infoData").style.display = "flex";
+
+    document.getElementById("btnEditarAgendamento").textContent = "SALVAR";
+}
+    document.addEventListener("click", function (evento) {
+    const espaco = evento.target.closest(".espaco-dia");
+
+    if (!espaco) return;
+
+    const linha = espaco.closest(".linha-agenda");
+    if (!linha) return;
+
+    const campoHorario = linha.querySelector(".horario");
+    if (!campoHorario) return;
+
+    const hora = Number(
+        campoHorario.textContent.trim().split(":")[0]
+    );
+
+    const retangulo = espaco.getBoundingClientRect();
+
+    if (retangulo.height === 0) return;
+
+    const posicaoY = evento.clientY - retangulo.top;
+
+    const minutos = Math.min(
+        45,
+        Math.max(0, Math.floor(
+            (posicaoY / retangulo.height) * 4
+        ) * 15)
+    );
+
+    const coluna = Array.from(
+        linha.querySelectorAll(".espaco-dia")
+    ).indexOf(espaco);
+
+    if (coluna < 0 || coluna > 6) return;
+
+    const horario =
+        String(hora).padStart(2, "0") + ":" +
+        String(minutos).padStart(2, "0");
+
+    abrirNovoAgendamento(coluna + 1, horario);
+});
+
+// RECOLHE BLOCOS CONFIGURAÇÃO//
+document.querySelectorAll(".titulo-secao-configuracao")
+    .forEach(botao => {
+        botao.addEventListener("click", () => {
+            const expandido =
+                botao.getAttribute("aria-expanded") === "true";
+
+            const conteudo = document.getElementById(
+                botao.getAttribute("aria-controls")
+            );
+
+            botao.setAttribute("aria-expanded", String(!expandido));
+            conteudo.hidden = expandido;
+        });
+    });
+    function restaurarConfiguracoesPadrao() {
+    const confirmar = confirm(
+        "DESEJA RESTAURAR HORÁRIOS, CORES, " +
+        "NOMES E DURAÇÕES PADRÃO DOS SERVIÇOS?"
+    );
+
+    if (!confirmar) return;
+
+    configuracoesAgenda = {
+        horarioInicial: "08:00",
+        horarioFinal: "20:00",
+        servicos: servicosPadrao.map(servico => ({
+            ...servico,
+            duracaoPadrao: Number(servico.duracaoPadrao) || 30
+        }))
+    };
+
+    servicosConfigurados = configuracoesAgenda.servicos;
+
+    try {
+        localStorage.setItem(
+            CHAVE_CONFIGURACOES,
+            JSON.stringify(configuracoesAgenda)
+        );
+    } catch (erro) {
+        alert("NÃO FOI POSSÍVEL SALVAR AS CONFIGURAÇÕES.");
+        console.error(erro);
+        return;
+    }
+
+    preencherHorarios("horarioInicial", "08:00");
+    preencherHorarios("horarioFinal", "20:00");
+
+    montarListaConfiguracao();
+    atualizarLegendaServicos();
+
+    alert("CONFIGURAÇÕES PADRÃO RESTAURADAS.");
+}
+document
+    .getElementById("btnRestaurarPadroes")
+    .addEventListener("click", restaurarConfiguracoesPadrao);
 

@@ -21,10 +21,6 @@
 <header class="cabecalho-principal">
     <h1>AGENDA</h1>
 
-  
-
-
-
 <button
     type="button"
     id="btnConfiguracoesAgenda"
@@ -82,7 +78,7 @@
 
 <div class="categoria-servico">
     <span class="cor-categoria cor-categoria-4">4</span>
-    <span>TOSA MANUAL</span>
+    <span>TOSA PREMIUM</span>
 </div>
 
 <div class="categoria-servico">
@@ -366,46 +362,86 @@
 </div>
 
 <div class="info-agendamento">
+    <strong>DATA</strong>
+    <span id="infoData" class="campo-data"></span>
+</div>
+
+<div class="info-agendamento">
     <strong>HORÁRIO</strong>
     <span id="infoHorario"></span>
     <input type="time" id="editarInicio">
 </div>
 
-    <div class="botoes-agendamento">
-        <button type="button" id="btnEditarAgendamento">EDITAR</button>
-    </div>
+   
+<div class="botoes-agendamento">
+    <button type="button" id="btnEditarAgendamento">EDITAR</button>
+
+    <button type="button" id="btnCancelarEdicao" hidden>
+        CANCELAR EDIÇÃO
+    </button>
+
+    <button type="button" id="btnExcluirAgendamento">
+        EXCLUIR AGENDAMENTO
+    </button>
+</div>
+
     
  </div>
 
 </div>
 
+
+
 <!-- JANELA DE CONFIGURAÇÕES DA AGENDA -->
 
 <div class="janela-agendamento" id="janelaConfiguracoes">
-
     <div class="conteudo-agendamento configuracoes-agenda">
 
         <button type="button" class="fechar-agendamento"
             id="fecharConfiguracoes">×</button>
 
         <h2>CONFIGURAÇÕES DA AGENDA</h2>
+        <button type="button" id="btnRestaurarPadroes">
+        RESTAURAR PADRÕES
+        </button>
+        <!-- ÁREA ROLÁVEL -->
+        <div class="area-configuracoes-rolavel">
 
-       
-<div class="configuracao-secao">
-    <h3>HORÁRIOS DE FUNCIONAMENTO</h3>
+            <!-- HORÁRIOS DE FUNCIONAMENTO -->
+            <div class="configuracao-secao">
+                <button type="button" class="titulo-secao-configuracao"
+                    aria-expanded="false" aria-controls="conteudoHorarios">
+                    HORÁRIOS DE FUNCIONAMENTO
+                    <span class="seta-secao">▾</span>
+                </button>
 
-    <label for="horarioInicial">Horário inicial</label>
-    <select id="horarioInicial"></select>
+                <div id="conteudoHorarios" class="conteudo-secao-configuracao" hidden>
+                    <label for="horarioInicial">Horário inicial</label>
+                    <select id="horarioInicial"></select>
 
-    <label for="horarioFinal">Horário final</label>
-    <select id="horarioFinal"></select>
-</div>
+                    <label for="horarioFinal">Horário final</label>
+                    <select id="horarioFinal"></select>
+                </div>
+            </div>
 
-        <div class="configuracao-secao">
-            <h3>SERVIÇOS E CORES</h3>
-            <div id="listaConfiguracaoServicos"></div>
+                   <!-- ACESSO RÁPIDO -->
+            <div class="configuracao-secao">
+                <button type="button" class="titulo-secao-configuracao"
+                    aria-expanded="false" aria-controls="conteudoServicos">
+                    ACESSO RÁPIDO
+                    <span class="seta-secao">▾</span>
+                </button>
+
+                <div id="conteudoServicos" class="conteudo-secao-configuracao" hidden>
+                    <p>Defina o nome e a duração padrão de cada serviço, em minutos.</p>
+                    <div id="listaConfiguracaoServicos"></div>
+                </div>
+            </div>
+
         </div>
+        <!-- FIM DA ÁREA ROLÁVEL -->
 
+        <!-- BOTÃO FORA DA ÁREA ROLÁVEL -->
         <div class="botoes-agendamento">
             <button type="button" id="btnSalvarConfiguracoes">
                 SALVAR
@@ -414,6 +450,7 @@
 
     </div>
 </div>
+
 
 <script src="maiusculas.js"></script>
 <script src="agenda.js"></script>
