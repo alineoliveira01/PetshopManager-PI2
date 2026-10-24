@@ -4,9 +4,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cliente</title>
+    <link rel="stylesheet" href="menu-lateral.css">
     <link rel="stylesheet" href="cliente.css">
 </head>
 <body>
+
+    <!-- MENU LATERAL -->
+<aside class="menu-lateral" id="menuLateral">
+    <div class="menu-lateral-cabecalho">
+        <span class="titulo-menu">PETSHOP</span>
+
+        <button
+            type="button"
+            id="btnRecolherMenu"
+            title="ESCONDER MENU"
+            aria-label="Esconder menu">
+            ×
+        </button>
+    </div>
+
+<nav>
+    <a href="agenda.html" class="item-menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="4" y="5" width="16" height="16" rx="2"/>
+            <path d="M8 3v4 M16 3v4 M4 10h16"/>
+        </svg>
+        <strong>AGENDA</strong>
+        <small>Agendamentos e serviços</small>
+    </a>
+
+    <a href="cliente.html" class="item-menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="9" cy="8" r="3"/>
+            <path d="M3 19v-2a6 6 0 0 1 12 0v2"/>
+            <circle cx="17" cy="9" r="2.5"/>
+            <path d="M17 14a5 5 0 0 1 4 5"/>
+        </svg>
+        <strong>CLIENTES</strong>
+        <small>Cadastro de tutores e pets</small>
+    </a>
+
+    <a href="vendas.html" class="item-menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M3 4h2l3 12h10l3-8H6"/>
+            <circle cx="10" cy="20" r="1"/>
+            <circle cx="18" cy="20" r="1"/>
+        </svg>
+        <strong>VENDAS</strong>
+        <small>Produtos, serviços e valores</small>
+    </a>
+
+    
+<a href="relatorio.html" class="item-menu">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 19V5 M4 19h16"/>
+        <path d="M8 15v-4 M12 15V7 M16 15V9 M20 15V4"/>
+    </svg>
+    <strong>RELATÓRIOS</strong>
+    <small>Histórico e consultas</small>
+</a>
+
+
+    <a href="#" id="linkConfiguracoesMenu" class="item-menu">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19 13.5l2-1.5-2-1.5-.5-2.5-2.5-.5L14.5 5h-3L10 7.5l-2.5.5L7 10.5 5 12l2 1.5.5 2.5 2.5.5 1.5 2.5h3l1.5-2.5 2.5-.5z"/>
+        </svg>
+        <strong>CONFIGURAÇÕES</strong>
+        <small>Horários e categorias</small>
+    </a>
+</nav>
+
+</aside>
+
+<button
+    type="button"
+    id="btnAbrirMenu"
+    class="botao-abrir-menu"
+    title="ABRIR MENU"
+    aria-label="Abrir menu"
+    hidden>
+    ☰
+</button>
+ 
     <main>
 
         <!-- AÇÕES PRINCIPAIS -->
@@ -190,9 +270,11 @@
             </div>
 
         </form>
-    </main>
+ </main>
 
-    <script src="maiusculas.js"></script>
-    <script src="cliente.js"></script>
+<script src="maiusculas.js"></script>
+<script src="menu-lateral.js"></script>
+<script src="cliente.js"></script>
+
 </body>
 </html>

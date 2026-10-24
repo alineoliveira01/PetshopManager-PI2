@@ -238,6 +238,27 @@ try {
         alert("Erro ao conectar com o servidor.");
     }
 });
+
+ // OS REGISTROS CORRESPONDENTES APARECEM SEM ENTER
+
+let temporizadorBuscaAoDigitar;
+
+campoBusca.addEventListener("input", function() {
+    clearTimeout(temporizadorBuscaAoDigitar);
+
+    const termo = campoBusca.value.trim();
+
+    if (termo === "") {
+        tabelaClientes.innerHTML = "";
+        listaClientes.hidden = true;
+        return;
+    }
+
+    temporizadorBuscaAoDigitar = setTimeout(function() {
+        btnPesquisar.click();
+    }, 300);
+});
+
 // SALVAR CLIENTE OU PET
 
 const btnSalvar = document.getElementById("btnSalvar");

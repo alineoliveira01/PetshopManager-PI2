@@ -5,6 +5,10 @@ let dataReferencia = new Date();
 let agendamentoSelecionado = null;
 let modoEdicao = false;
 let criandoNovoAgendamento = false;
+let clienteSelecionadoAgenda = null;
+let petSelecionadoAgenda = null;
+let cliquesBuscaVazia = 0;
+
 
 
 /* SERVIÇOS E CONFIGURAÇÕES */
@@ -70,10 +74,8 @@ function carregarConfiguracoes() {
     };
 }
 
-
 let configuracoesAgenda = carregarConfiguracoes();
 let servicosConfigurados = configuracoesAgenda.servicos;
-
 
 /* IDENTIFICA O SERVIÇO PELO NOME OU CÓDIGO */
 
@@ -146,52 +148,34 @@ function atualizarSemana() {
     });
 }
 
+
 /* NAVEGAÇÃO DA SEMANA */
 
-document.getElementById("btnSemanaAnterior")
-    .addEventListener("click", () => {
+const btnSemanaAnterior = document.getElementById("btnSemanaAnterior");
+
+if (btnSemanaAnterior) {
+    btnSemanaAnterior.addEventListener("click", () => {
         dataReferencia.setDate(dataReferencia.getDate() - 7);
         atualizarSemana();
+        criarAgendamentosTeste();
     });
+}
 
 
-document.getElementById("btnProximaSemana")
-    .addEventListener("click", () => {
-        console.log("CLIQUE NA PRÓXIMA SEMANA");
+const btnProximaSemana = document.getElementById("btnProximaSemana");
 
+if (btnProximaSemana) {
+    btnProximaSemana.addEventListener("click", () => {
         dataReferencia.setDate(dataReferencia.getDate() + 7);
         atualizarSemana();
-
-        console.log("DATA DE REFERÊNCIA:", dataReferencia);
+        criarAgendamentosTeste();
     });
-
-console.log("NAVEGAÇÃO SEMANAL CARREGADA");
-atualizarSemana();
-
-/* AGENDAMENTOS SALVOS */
+}
+/* AGENDAMENTOS */
 
 const CHAVE_AGENDAMENTOS = "agendaAgendamentos";
 
-const agendamentosPadrao = [
-    {
-        dia: 6,
-        inicio: "10:37",
-        duracao: 30,
-        cliente: "MARIA SILVA",
-        pet: "TOBI",
-        servico: "BANHO",
-        codigoServico: 1
-    },
-    {
-        dia: 6,
-        inicio: "11:20",
-        duracao: 30,
-        cliente: "JOÃO SANTOS",
-        pet: "LUNA",
-        servico: "TOSA",
-        codigoServico: 2
-    }
-];
+const agendamentosPadrao = [];
 
 function carregarAgendamentos() {
     try {
@@ -342,10 +326,36 @@ function abrirAgendamento(agendamento) {
 }
 /* CRIA OS AGENDAMENTOS */
 
+
 function criarAgendamentosTeste() {
     const camada = document.getElementById("camadaAgendamentos");
 
+
+   if (!camada) {
+        console.error("CAMADA DE AGENDAMENTOS NÃO ENCONTRADA NESTA PÁGINA.");
+        return;
+    }
+    const segunda = inicioDaSemana(dataReferencia);
+
+    // LIMPA OS BLOCOS DA SEMANA ANTERIOR
+    camada.replaceChildren();
+
     agendamentosTeste.forEach((agendamento, indice) => {
+        // IGNORA AGENDAMENTOS SEM DATA COMPLETA
+        if (!agendamento.data) return;
+
+        // CONVERTE A DATA DD/MM/AAAA PARA UMA DATA VÁLIDA
+        const [dia, mes, ano] = agendamento.data.split("/").map(Number);
+        const dataAgendamento = new Date(ano, mes - 1, dia);
+        dataAgendamento.setHours(0, 0, 0, 0);
+
+        // VERIFICA SE A DATA PERTENCE À SEMANA EXIBIDA
+        const diferencaDias = Math.round(
+            (dataAgendamento - segunda) / (1000 * 60 * 60 * 24)
+        );
+
+        if (diferencaDias < 0 || diferencaDias > 6) return;
+
         const bloco = document.createElement("div");
 
         bloco.className = "agendamento-teste";
@@ -353,21 +363,22 @@ function criarAgendamentosTeste() {
 
         agendamento.bloco = bloco;
 
-        bloco.style.gridColumn = agendamento.dia + 1;
+        // POSICIONA NA COLUNA DO DIA
+        bloco.style.gridColumn = diferencaDias + 2;
         bloco.style.gridRow = "1 / -1";
         bloco.style.margin = "0 4px";
 
         atualizarBloco(agendamento);
-
         camada.appendChild(bloco);
 
         bloco.addEventListener("click", () => {
-        abrirAgendamento(agendamento);
+            abrirAgendamento(agendamento);
         });
     });
 }
 
 criarAgendamentosTeste();
+
 
 /* DIVISÕES DE 15 MINUTOS */
 
@@ -383,9 +394,6 @@ function criarDivisoes15Minutos() {
 }
 
 criarDivisoes15Minutos();
-
-/* MOSTRA OU ESCONDE OS CAMPOS DE EDIÇÃO */
-
 
 /* MOSTRA OU ESCONDE OS CAMPOS DE EDIÇÃO */
 
@@ -458,31 +466,13 @@ document.getElementById("btnEditarAgendamento")
         agendamentoSelecionado.duracao =
             servico.duracaoPadrao || 30;
 
-       if (criandoNovoAgendamento) {
-    const agendamento = agendamentoSelecionado;
-
-    agendamentosTeste.push(agendamento);
-
-    const camada = document.getElementById("camadaAgendamentos");
-    const bloco = document.createElement("div");
-
-    bloco.className = "agendamento-teste";
-    bloco.dataset.agendamentoId = agendamentosTeste.length - 1;
-
-    agendamento.bloco = bloco;
-
-    bloco.style.gridColumn = agendamento.dia + 1;
-    bloco.style.gridRow = "1 / -1";
-    bloco.style.margin = "0 4px";
-
-    bloco.addEventListener("click", () => {
-        abrirAgendamento(agendamento);
-    });
-
-    camada.appendChild(bloco);
-
+if (criandoNovoAgendamento) {
+    agendamentosTeste.push(agendamentoSelecionado);
     criandoNovoAgendamento = false;
 }
+
+criarAgendamentosTeste();
+
 
     atualizarBloco(agendamentoSelecionado);
     salvarAgendamentos();
@@ -642,7 +632,33 @@ function atualizarLegendaServicos() {
         }
     );
 }
+/* ABRIR CONFIGURAÇÕES PELO MENU LATERAL */
 
+const linkConfiguracoesMenu =
+    document.getElementById("linkConfiguracoesMenu");
+
+if (linkConfiguracoesMenu) {
+    linkConfiguracoesMenu.addEventListener("click", (evento) => {
+        evento.preventDefault();
+
+        window.location.href =
+            "agenda.html?abrirConfiguracoes=1";
+    });
+}
+
+/* ABRIR CONFIGURAÇÕES AO ENTRAR NA AGENDA */
+
+const parametrosURL = new URLSearchParams(window.location.search);
+
+if (parametrosURL.get("abrirConfiguracoes") === "1") {
+    document.getElementById("btnConfiguracoesAgenda")?.click();
+
+    window.history.replaceState(
+        {},
+        document.title,
+        window.location.pathname
+    );
+}
 
 function montarListaConfiguracao() {
     listaConfiguracaoServicos.replaceChildren();
@@ -926,10 +942,12 @@ function aplicarHorarioFuncionamento() {
         const limiteInicial = horaInicial * 60;
         const limiteFinal = horaFinal * 60;
 
-        agendamento.bloco.style.display =
-            inicio >= limiteInicial && fim <= limiteFinal
-                ? ""
-                : "none";
+        if (!agendamento.bloco) return;
+
+    agendamento.bloco.style.display =
+        inicio >= limiteInicial && fim <= limiteFinal
+            ? ""
+            : "none";
     });
 }
 
@@ -937,9 +955,6 @@ aplicarHorarioFuncionamento();
 
 /* BUSCA DE CLIENTES NA AGENDA */
 
-let clienteSelecionadoAgenda = null;
-let petSelecionadoAgenda = null;
-let cliquesBuscaVazia = 0;
 
 const campoBuscaAgenda =
     document.getElementById("campoBuscaAgenda");
@@ -951,6 +966,31 @@ const resultadoBuscaAgenda =
     document.getElementById("resultadoBuscaAgenda");
 
 btnPesquisarAgenda.addEventListener("click", pesquisarClienteAgenda);
+
+
+/* BUSCA AUTOMÁTICA AO DIGITAR */
+
+let temporizadorBuscaAgenda;
+
+campoBuscaAgenda.addEventListener("input", function() {
+    clearTimeout(temporizadorBuscaAgenda);
+
+    const termo = campoBuscaAgenda.value.trim();
+
+    // Limpa os resultados quando o campo fica vazio
+    if (!termo) {
+        resultadoBuscaAgenda.replaceChildren();
+        clienteSelecionadoAgenda = null;
+        petSelecionadoAgenda = null;
+        return;
+    }
+
+    // Aguarda uma pequena pausa antes de pesquisar
+    temporizadorBuscaAgenda = setTimeout(() => {
+        pesquisarClienteAgenda();
+    }, 300);
+});
+
 
 campoBuscaAgenda.addEventListener("keydown", event => {
     if (event.key === "Enter") {
@@ -1114,7 +1154,19 @@ function abrirNovoAgendamento(dia, horario) {
     dataSelecionada.setDate(
         dataSemana.getDate() + dia - 1
     );
+    
+/* IMPEDIR AGENDAMENTOS EM DIAS PASSADOS */
 
+const hoje = new Date();
+hoje.setHours(0, 0, 0, 0);
+
+const dataVerificada = new Date(dataSelecionada);
+dataVerificada.setHours(0, 0, 0, 0);
+
+if (dataVerificada < hoje) {
+    alert("NÃO É POSSÍVEL AGENDAR EM DIA ANTERIOR AO ATUAL.");
+    return;
+}
     const dataFormatada = dataSelecionada.toLocaleDateString("pt-BR");
 
     const novoAgendamento = {
@@ -1123,42 +1175,33 @@ function abrirNovoAgendamento(dia, horario) {
     inicio: horario,
     duracao: 30,
     cliente: "",
+    idCliente: null,
     pet: "",
+    idPet: null,
     servico: "",
     codigoServico: null
 };
-    if (clienteSelecionadoAgenda && petSelecionadoAgenda) {
+   // VINCULAR CLIENTE E PET PELOS IDS
+if (clienteSelecionadoAgenda && petSelecionadoAgenda) {
     novoAgendamento.cliente =
         clienteSelecionadoAgenda.nome.toUpperCase();
 
-    novoAgendamento.pet =
-        petSelecionadoAgenda.nomePet.toUpperCase();
-}
-
-   // TRANSFERE O CLIENTE E O PET SELECIONADOS
-    if (clienteSelecionadoAgenda && petSelecionadoAgenda) {
-    novoAgendamento.cliente =
-        clienteSelecionadoAgenda.nome.toUpperCase();
+    novoAgendamento.idCliente =
+        clienteSelecionadoAgenda.id;
 
     novoAgendamento.pet =
         petSelecionadoAgenda.nomePet.toUpperCase();
+
+    novoAgendamento.idPet =
+        petSelecionadoAgenda.id;
 }
 
-agendamentoSelecionado = novoAgendamento;
-criandoNovoAgendamento = true;
+    agendamentoSelecionado = novoAgendamento;
+    criandoNovoAgendamento = true;
 
     console.log("CLIENTE SELECIONADO:", clienteSelecionadoAgenda);
-console.log("PET SELECIONADO:", petSelecionadoAgenda);
-console.log("NOVO AGENDAMENTO:", novoAgendamento);
-
-    if (clienteSelecionadoAgenda && petSelecionadoAgenda) {
-    agendamentoSelecionado.cliente =
-        clienteSelecionadoAgenda.nome.toUpperCase();
-
-    agendamentoSelecionado.pet =
-        petSelecionadoAgenda.nomePet.toUpperCase();
-}
-
+    console.log("PET SELECIONADO:", petSelecionadoAgenda);
+    console.log("NOVO AGENDAMENTO:", novoAgendamento);
     document.getElementById("infoCliente").textContent = "";
     document.getElementById("infoPet").textContent = "";
     document.getElementById("infoServico").textContent = "";
@@ -1186,6 +1229,12 @@ console.log("NOVO AGENDAMENTO:", novoAgendamento);
     const espaco = evento.target.closest(".espaco-dia");
 
     if (!espaco) return;
+
+
+
+    console.log("CLIQUE NO ESPAÇO VAZIO DA AGENDA");
+
+
 
     const linha = espaco.closest(".linha-agenda");
     if (!linha) return;
@@ -1279,4 +1328,3 @@ document.querySelectorAll(".titulo-secao-configuracao")
 document
     .getElementById("btnRestaurarPadroes")
     .addEventListener("click", restaurarConfiguracoesPadrao);
-

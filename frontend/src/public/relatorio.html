@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RELATÓRIOS - PETSHOPMANAGER</title>
+
+    <link rel="stylesheet" href="menu-lateral.css">
+    <link rel="stylesheet" href="relatorio.css">
+</head>
+
+<body>
+
+    <!-- MENU LATERAL -->
+    <aside class="menu-lateral" id="menuLateral">
+        <div class="menu-lateral-cabecalho">
+            <span class="titulo-menu">PETSHOP</span>
+            <button type="button" id="btnRecolherMenu"
+                title="ESCONDER MENU"
+                aria-label="Esconder menu">×</button>
+        </div>
+
+        <nav>
+            <a href="agenda.html" class="item-menu">
+                <strong>AGENDA</strong>
+                <small>Agendamentos e serviços</small>
+            </a>
+
+            <a href="cliente.html" class="item-menu">
+                <strong>CLIENTES</strong>
+                <small>Cadastro de tutores e pets</small>
+            </a>
+
+            <a href="vendas.html" class="item-menu">
+                <strong>VENDAS</strong>
+                <small>Produtos, serviços e valores</small>
+            </a>
+
+            <a href="relatorio.html" class="item-menu">
+                <strong>RELATÓRIOS</strong>
+                <small>Histórico e consultas</small>
+            </a>
+
+            <a href="#" id="linkConfiguracoesMenu" class="item-menu">
+                <strong>CONFIGURAÇÕES</strong>
+                <small>Horários e categorias</small>
+            </a>
+        </nav>
+    </aside>
+
+    <button type="button" id="btnAbrirMenu"
+        class="botao-abrir-menu"
+        title="ABRIR MENU"
+        aria-label="Abrir menu" hidden>☰</button>
+
+    <!-- CONTEÚDO DOS RELATÓRIOS -->
+    <main class="conteudo-relatorios">
+
+        <header class="cabecalho-relatorios">
+            <h1>RELATÓRIOS</h1>
+            <p>CONSULTA E HISTÓRICO DE ATENDIMENTOS</p>
+        </header>
+
+        <section class="painel-filtros">
+            <h2>FILTROS DE CONSULTA</h2>
+
+            <div class="grade-filtros">
+                <div class="campo-filtro">
+                    <label for="dataInicial">DATA INICIAL</label>
+                    <input type="date" id="dataInicial">
+                </div>
+
+                <div class="campo-filtro">
+                    <label for="dataFinal">DATA FINAL</label>
+                    <input type="date" id="dataFinal">
+                </div>
+
+                <div class="campo-filtro">
+                    <label for="filtroCliente">CLIENTE</label>
+                    <input type="text" id="filtroCliente"
+                        placeholder="TODOS OS CLIENTES">
+                </div>
+
+                <div class="campo-filtro">
+                    <label for="filtroPet">PET</label>
+                    <input type="text" id="filtroPet"
+                        placeholder="TODOS OS PETS">
+                </div>
+
+                <div class="campo-filtro">
+                    <label for="filtroProcedimento">PROCEDIMENTO</label>
+                    <select id="filtroProcedimento">
+                        <option value="">TODOS OS PROCEDIMENTOS</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="acoes-relatorio">
+                <button type="button" id="btnConsultar">
+                    CONSULTAR
+                </button>
+
+                <button type="button" id="btnLimpar">
+                    LIMPAR FILTROS
+                </button>
+                <button type="button" id="btnExportarPDF">
+                    EXPORTAR PDF
+                </button>
+                <button type="button" id="btnExportarExcel">
+                    EXPORTAR EXCEL
+                </button>
+            </div>
+        </section>
+
+        <section class="painel-resultados">
+            <h2>RESULTADO DA CONSULTA</h2>
+
+            <p id="totalResultados">
+                NENHUM RELATÓRIO CONSULTADO.
+            </p>
+
+            <div class="tabela-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>DATA</th>
+                            <th>CLIENTE</th>
+                            <th>PET</th>
+                            <th>SEXO</th>
+                            <th>PROCEDIMENTO</th>
+                            <th>DETALHES</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="listaRelatorios">
+                        <tr>
+                            <td colspan="7">
+                                UTILIZE OS FILTROS PARA CONSULTAR OS ATENDIMENTOS.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <script src="menu-lateral.js"></script>
+    <script src="maiusculas.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="relatorio.js"></script>
+
+</body>
+</html>

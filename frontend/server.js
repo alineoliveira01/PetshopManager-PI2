@@ -69,8 +69,33 @@ app.get('/clientes', (req, res) => {
         res.json(rows);
     });
 });
-// ROTA: Buscar pets de um cliente
+// ROTA: Buscar pets de um cliente pelo ID
 
+app.get('/pet/:id', (req, res) => {
+    const { id } = req.params;
+
+    const sql = `
+        SELECT *
+        FROM pets
+        WHERE id = ?
+    `;
+
+    db.get(sql, [id], (err, pet) => {
+        if (err) {
+            return res.status(500).json({
+                erro: err.message
+            });
+        }
+
+        if (!pet) {
+            return res.status(404).json({
+                erro: "Pet não encontrado."
+            });
+        }
+
+        res.json(pet);
+    });
+});
 app.get('/pets/:idCliente', (req, res) => {
     const { idCliente } = req.params;
 
