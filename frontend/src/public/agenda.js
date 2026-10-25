@@ -161,6 +161,7 @@ if (btnSemanaAnterior) {
     });
 }
 
+atualizarSemana();
 
 const btnProximaSemana = document.getElementById("btnProximaSemana");
 
@@ -171,6 +172,9 @@ if (btnProximaSemana) {
         criarAgendamentosTeste();
     });
 }
+
+    
+
 /* AGENDAMENTOS */
 
 const CHAVE_AGENDAMENTOS = "agendaAgendamentos";
@@ -721,8 +725,6 @@ function montarListaConfiguracao() {
         listaConfiguracaoServicos.appendChild(linha);
     });
 }
-
-
 
 /* OPÇÕES DE HORÁRIO: 08:00 ATÉ 20:00 */
 

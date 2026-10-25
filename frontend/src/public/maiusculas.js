@@ -6,7 +6,7 @@ document.addEventListener("input", event => {
 
     if (
         !campo.matches(
-            'input[type="text"], input:not([type]), textarea')) {
+            'input[type="text"], input[type="search"], input:not([type]), textarea')) {
         return;
     }
     const inicio = campo.selectionStart;

@@ -6,7 +6,8 @@
     <title>Vendas</title>
     <link rel="stylesheet" href="menu-lateral.css">
     <link rel="stylesheet" href="vendas.css">
-</head>
+    </head>
+
 <body>
     <!-- MENU LATERAL -->
 <aside class="menu-lateral" id="menuLateral">
@@ -98,6 +99,7 @@
         <!-- FORMULÁRIO DA VENDA -->
         <form id="formVenda">
             <input type="hidden" id="idVenda" name="idVenda">
+            <input type="hidden" id="idClienteVenda" name="idClienteVenda">
 
             <!-- DADOS DA VENDA -->
             <section id="dadosVenda">
@@ -129,22 +131,63 @@
                 </div>
             </section>
 
-            <!-- CLIENTE E PET -->
-            <section id="dadosCliente">
-                <h2>Cliente e Pet</h2>
+<!-- BUSCA DE AGENDAMENTO -->
+<div class="subdivisao" id="buscaClienteVenda">
+    <h3>Buscar Agendamento</h3>
 
-                <!-- BUSCA DE CLIENTE -->
-                <div class="subdivisao" id="buscaClienteVenda">
-                <h3>Busca de Cliente</h3>
+    <div class="area-pesquisa">
+        <div class="campo">
+            <label for="campoBuscaCliente">
+                Nome do cliente ou pet
+            </label>
+            <input
+                type="search"
+                id="campoBuscaCliente"
+                name="campoBuscaCliente"
+                placeholder="Digite o nome do cliente ou pet..."
+            >
+        </div>
 
-                    <div class="area-pesquisa">
-                        <div class="campo">
-                            <label for="campoBuscaCliente">Nome, telefone ou CPF/CNPJ</label>
-                            <input type="search" id="campoBuscaCliente" name="campoBuscaCliente"
-                                   placeholder="Digite para buscar o cliente...">
-                        </div>
-                        <button type="button" id="btnPesquisarCliente">Pesquisar</button>
-                    </div>
+        <button type="button" id="btnPesquisarCliente">
+            Pesquisar Agendamento
+        </button>
+    </div>
+</div>
+
+<!-- RESULTADOS DA BUSCA DE AGENDAMENTOS -->
+<div id="listaClientesVenda" hidden>
+    <h3>Agendamentos encontrados</h3>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Horário</th>
+                <th>Cliente</th>
+                <th>Pet</th>
+                <th>Serviço</th>
+                <th>Ação</th>
+            </tr>
+        </thead>
+        <tbody id="tabelaClientesVenda"></tbody>
+    </table>
+</div>
+
+                <!-- RESULTADOS DA BUSCA -->
+                <div id="listaClientesVenda" hidden>
+                    <h3>Clientes encontrados</h3>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Telefone</th>
+                                <th>CPF/CNPJ</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabelaClientesVenda"></tbody>
+                    </table>
                 </div>
 
                 <!-- DADOS DO CLIENTE -->
@@ -176,6 +219,13 @@
                             <select id="petSelecionado" name="petSelecionado">
                                 <option value="">Selecione o pet</option>
                             </select>
+                        </div>
+                        
+                        <div class="campo">
+                            <label for="atendimentoVenda">Atendimento</label>
+                            <input
+                            type="text" id="atendimentoVenda" name="atendimentoVenda" placeholder="Serviço agendado" readonly
+    >
                         </div>
 
                         <div class="campo">
@@ -291,6 +341,6 @@
 
     <script src="maiusculas.js"></script>
     <script src="menu-lateral.js"></script>
-    <script src="agenda.js"></script>
+    <script src="vendas.js"></script>
 </body>
 </html>

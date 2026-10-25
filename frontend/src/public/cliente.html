@@ -157,19 +157,29 @@
                     <input type="text" id="endereco" name="endereco" placeholder="Endereço">
                 </div>
 
-                <div class="campo campo-cpf">
+                <div class="linha-documentos">
+                <div class="campo campo-cpf-cnpj">
                     <label for="cpfCnpj">CPF/CNPJ</label>
-                    <input type="text" id="cpfCnpj" name="cpfCnpj" placeholder="CPF ou CNPJ">
-                </div>
+                    <input type="text" id="cpfCnpj" name="cpfCnpj"
+               placeholder="CPF ou CNPJ">
+            </div>
+
+               <div class="campo campo-data">
+                <label for="dataRegistro">Data de Cadastro</label>
+                <input type="date" id="dataRegistro"
+               name="dataRegistro" readonly>
+            </div>
 
                 <div class="campo campo-data">
-                    <label for="dataRegistro">Data do Registro</label>
-                    <input type="date" id="dataRegistro" name="dataRegistro">
+                    <label for="ultimoAtendimento">Último Atendimento</label>
+                    <input type="date" id="ultimoAtendimento"
+               name="ultimoAtendimento" readonly>
+            </div>
                 </div>
-            </section>
+          </section>
 
             <!-- LISTA DE PETS -->
-            <section id="listaPets" hidden>
+         <section id="listaPets" hidden>
                 <h3>Pets cadastrados</h3>
 
                 <table>
@@ -260,13 +270,12 @@
             <!-- AÇÕES DO FORMULÁRIO -->
             <div id="acoesFormulario">
 
-           <button type="button" id="btnNovoPet" disabled>Novo Pet</button>
-           
-            <button type="button" 
-            id="btnSalvar">Cadastrar</button>
+            <button type="button" id="btnNovoPet" disabled>Novo Pet</button>
+            <button type="button" id="btnSalvar">Cadastrar</button>
             <button type="button" id="btnEditar">Editar</button>
             <button type="button" id="btnSalvarAlteracoes" disabled>Salvar alterações</button>
             <button type="button" id="btnExcluir">Excluir</button>
+            <button type="button" id="btnCancelar">Cancelar</button>
             </div>
 
         </form>

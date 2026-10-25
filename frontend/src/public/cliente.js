@@ -36,6 +36,12 @@ btnNovo.addEventListener("click", function() {
     btnSalvar.disabled = false;
     formClientePet.reset();
 
+const hoje = new Date();
+hoje.setMinutes(hoje.getMinutes() - hoje.getTimezoneOffset());
+
+document.getElementById("dataRegistro").value =
+    hoje.toISOString().slice(0, 10);
+
     liberarCamposCliente();
     liberarCamposPet();
    
@@ -112,7 +118,9 @@ btnPesquisar.addEventListener("click", async function() {
                         <td>${cliente.nome}</td>
                         <td>${cliente.telefone || ""}</td>
                         <td>${cliente.cpfCnpj || ""}</td>
-                        <td>${cliente.dataRegistro || ""}</td>
+                        <td>${cliente.dataRegistro
+                        ? new Date(cliente.dataRegistro + "T00:00:00").toLocaleDateString("pt-BR")
+                        :   ""}</td>
                         <td>
                             <button type="button"
                                     class="btnSelecionarCliente"
@@ -141,8 +149,57 @@ btnPesquisar.addEventListener("click", async function() {
                 document.getElementById("email").value = cliente.email || "";
                 document.getElementById("telefone").value = cliente.telefone || "";
                 document.getElementById("endereco").value = cliente.endereco || "";
+
                 document.getElementById("cpfCnpj").value = cliente.cpfCnpj || "";
                 document.getElementById("dataRegistro").value = cliente.dataRegistro || "";
+              
+                // BUSCAR O ÚLTIMO ATENDIMENTO NA AGENDA
+                const agendamentos = JSON.parse(
+                    localStorage.getItem("agendaAgendamentos") || "[]"
+                );
+
+                const hoje = new Date();
+                hoje.setHours(0, 0, 0, 0);
+
+                const atendimentosCliente = agendamentos
+                    .filter(agendamento =>
+                        agendamento.cliente?.trim().toUpperCase() ===
+                        cliente.nome.trim().toUpperCase()
+                    )
+                    .filter(agendamento => {
+                        if (!agendamento.data) return false;
+
+                        const [dia, mes, ano] =
+                            agendamento.data.split("/").map(Number);
+
+                        const data = new Date(ano, mes - 1, dia);
+                        data.setHours(0, 0, 0, 0);
+                        
+
+                        return data < hoje;
+                    })
+                    .sort((a, b) => {
+                        const [diaA, mesA, anoA] =
+                            a.data.split("/").map(Number);
+                        const [diaB, mesB, anoB] =
+                            b.data.split("/").map(Number);
+
+                        return new Date(anoB, mesB - 1, diaB) -
+                               new Date(anoA, mesA - 1, diaA);
+                    });
+
+                const campoUltimoAtendimento =
+                    document.getElementById("ultimoAtendimento");
+
+                if (atendimentosCliente.length > 0) {
+                    const [dia, mes, ano] =
+                        atendimentosCliente[0].data.split("/");
+
+                    campoUltimoAtendimento.value =
+                        `${ano}-${mes}-${dia}`;
+                } else {
+                    campoUltimoAtendimento.value = "";
+                }
 
                 bloquearCamposCliente();
                 bloquearCamposPet();
@@ -150,88 +207,10 @@ btnPesquisar.addEventListener("click", async function() {
                 buscaCliente.hidden = true;
                 listaClientes.hidden = true;
 
+                await carregarPets(id);
 
-// PETS DO CLIENTE SELECIONADO
-
-listaPets.hidden = false;
-
-const tabelaPets = document.getElementById("tabelaPets");
-
-try {
-    const respostaPets = await fetch(`http://localhost:3000/pets/${id}`);
-    const pets = await respostaPets.json();
-
-    tabelaPets.innerHTML = "";
-
-    if (pets.length === 0) {
-        tabelaPets.innerHTML = `
-            <tr>
-                <td colspan="5">Nenhum pet cadastrado.</td>
-            </tr>
-        `;
-    } else {
-        pets.forEach(pet => {
-            tabelaPets.innerHTML += `
-                <tr>
-                    <td>${pet.nomePet}</td>
-                    <td>${pet.raca || ""}</td>
-                    <td>${pet.sexo || ""}</td>
-                    <td>${pet.porte || ""}</td>
-                    <td>
-                        <button type="button"
-                                class="btnSelecionarPet"
-                                data-id="${pet.id}">
-                            Selecionar
-                        </button>
-                    </td>
-                </tr>
-            `;
-        });
-    }
-
-// SELECIONAR PET
-
-     document.querySelectorAll(".btnSelecionarPet").forEach(function(botaoPet) {
-        botaoPet.addEventListener("click", function() {
-            const idPetSelecionado = this.dataset.id;
-            const pet = pets.find(pet => pet.id == idPetSelecionado);
-
-                 if (!pet) {
-                    alert("Pet não encontrado.");
-                    return;
-                }
-
-                document.getElementById("idPet").value = pet.id;
-                document.getElementById("nomePet").value = pet.nomePet || "";
-                document.getElementById("sexo").value = pet.sexo || "";
-                document.getElementById("tipoPet").value = pet.tipoPet || "";
-                document.getElementById("raca").value = pet.raca || "";
-                document.getElementById("porte").value = pet.porte || "";
-                document.getElementById("tipoOutro").value = pet.tipoOutro || "";
-                document.getElementById("caracteristicasPet").value = pet.caracteristicasPet || "";
-                document.getElementById("detalhesServico").value = pet.detalhesServico || "";
-                document.getElementById("observacoes").value = pet.observacoes || "";
-
-                if (pet.tipoPet === "outros") {
-                    campoTipoOutro.hidden = false;
-                    } else {
-                    campoTipoOutro.hidden = true;
-                    }
-                bloquearCamposPet();
-                });
             });
-
-    } catch (erro) {
-        console.error("Erro ao carregar pets:", erro);
-
-        tabelaPets.innerHTML = `
-            <tr>
-                <td colspan="5">Erro ao carregar os pets.</td>
-            </tr>
-        `;
-    }
-    });
-});
+        });
 
     } catch (erro) {
         console.error("Erro ao buscar clientes:", erro);
@@ -258,6 +237,96 @@ campoBusca.addEventListener("input", function() {
         btnPesquisar.click();
     }, 300);
 });
+
+
+async function carregarPets(idCliente) {
+    listaPets.hidden = false;
+
+    const tabelaPets = document.getElementById("tabelaPets");
+
+    try {
+        const respostaPets = await fetch(
+            `http://localhost:3000/pets/${idCliente}`
+        );
+
+        const pets = await respostaPets.json();
+
+        if (!respostaPets.ok) {
+            throw new Error(pets.erro || "Erro ao carregar pets.");
+        }
+
+        tabelaPets.innerHTML = "";
+
+        if (pets.length === 0) {
+            tabelaPets.innerHTML = `
+                <tr>
+                    <td colspan="5">Nenhum pet cadastrado.</td>
+                </tr>
+            `;
+            return;
+        }
+
+        pets.forEach(pet => {
+            tabelaPets.innerHTML += `
+                <tr>
+                    <td>${pet.nomePet}</td>
+                    <td>${pet.raca || ""}</td>
+                    <td>${pet.sexo || ""}</td>
+                    <td>${pet.porte || ""}</td>
+                    <td>
+                        <button type="button"
+                                class="btnSelecionarPet"
+                                data-id="${pet.id}">
+                            Selecionar
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+
+        document.querySelectorAll(".btnSelecionarPet").forEach(botaoPet => {
+            botaoPet.addEventListener("click", function() {
+                const idPetSelecionado = this.dataset.id;
+                const pet = pets.find(p => p.id == idPetSelecionado);
+
+                if (!pet) {
+                    alert("Pet não encontrado.");
+                    return;
+                }
+
+                document.getElementById("idPet").value = pet.id;
+                document.getElementById("nomePet").value = pet.nomePet || "";
+                document.getElementById("sexo").value = pet.sexo || "";
+                document.getElementById("tipoPet").value = pet.tipoPet || "";
+                document.getElementById("raca").value = pet.raca || "";
+                document.getElementById("porte").value = pet.porte || "";
+                document.getElementById("tipoOutro").value = pet.tipoOutro || "";
+                document.getElementById("caracteristicasPet").value =
+                    pet.caracteristicasPet || "";
+                document.getElementById("detalhesServico").value =
+                    pet.detalhesServico || "";
+                document.getElementById("observacoes").value =
+                    pet.observacoes || "";
+
+                campoTipoOutro.hidden = pet.tipoPet !== "outros";
+
+                bloquearCamposPet();
+                btnSalvar.disabled = true;
+                btnSalvarAlteracoes.disabled = true;
+            });
+        });
+
+    } catch (erro) {
+        console.error("Erro ao carregar pets:", erro);
+
+        tabelaPets.innerHTML = `
+            <tr>
+                <td colspan="5">Erro ao carregar os pets.</td>
+            </tr>
+        `;
+    }
+}
+
 
 // SALVAR CLIENTE OU PET
 
@@ -341,16 +410,37 @@ btnSalvar.addEventListener("click", async function() {
             alert(dados.erro);
             return;
         }
-
+        
         document.getElementById("idPet").value = dados.id;
-
+        await carregarPets(idCliente);
         alert("Pet cadastrado com sucesso!");
 
-    } catch (erro) {
-    console.error("ERRO REAL:", erro);
-    alert("Erro: " + erro.message);
-    }
-});
+// LIMPAR OS CAMPOS DO PET
+        document.getElementById("idPet").value = "";
+        document.getElementById("nomePet").value = "";
+        document.getElementById("sexo").value = "";
+        document.getElementById("tipoPet").value = "";
+        document.getElementById("raca").value = "";
+        document.getElementById("porte").value = "";
+        document.getElementById("tipoOutro").value = "";
+        document.getElementById("caracteristicasPet").value = "";
+        document.getElementById("detalhesServico").value = "";
+        document.getElementById("observacoes").value = "";
+
+// BLOQUEAR OS CAMPOS DO PET
+        bloquearCamposPet();
+
+// DESABILITAR OS BOTÕES DE AÇÃO
+        btnSalvar.disabled = true;
+        btnSalvarAlteracoes.disabled = true;
+        btnNovoPet.disabled = false;
+
+
+            } catch (erro) {
+            console.error("ERRO REAL:", erro);
+            alert("Erro: " + erro.message);
+        }
+    });
 // EDITAR CLIENTE OU PET
 
 btnEditar.addEventListener("click", function() {
@@ -413,30 +503,36 @@ btnSalvarAlteracoes.addEventListener("click", async function() {
                 return;
             }
 
-            alert("Pet atualizado com sucesso!");
+                alert("Pet atualizado com sucesso!");
 
-            const botaoPet = document.querySelector(
-                `.btnSelecionarPet[data-id="${idPet}"]`
-            );
+        // Atualiza a lista com os dados mais recentes do servidor
+            await carregarPets(idCliente);
 
-            if (botaoPet) {
-                const linha = botaoPet.closest("tr");
+        // Limpa os campos do pet
+            document.getElementById("idPet").value = "";
+            document.getElementById("nomePet").value = "";
+            document.getElementById("sexo").value = "";
+            document.getElementById("tipoPet").value = "";
+            document.getElementById("raca").value = "";
+            document.getElementById("porte").value = "";
+            document.getElementById("tipoOutro").value = "";
+            document.getElementById("caracteristicasPet").value = "";
+            document.getElementById("detalhesServico").value = "";
+            document.getElementById("observacoes").value = "";
 
-                linha.cells[0].textContent = pet.nomePet;
-                linha.cells[1].textContent = pet.raca;
-                linha.cells[2].textContent = pet.sexo;
-                linha.cells[3].textContent = pet.porte;
-            }
+            campoTipoOutro.hidden = true;
 
             bloquearCamposPet();
             btnSalvarAlteracoes.disabled = true;
-            return;
+            btnSalvar.disabled = true;
+            btnNovoPet.disabled = false;
 
-        } catch (erro) {
+            return;
+            } catch (erro) {
             console.error("Erro ao salvar alterações:", erro);
             alert("Erro ao conectar com o servidor.");
             return;
-        }
+            }
     }
 
     if (idCliente) {
@@ -487,10 +583,53 @@ btnSalvarAlteracoes.addEventListener("click", async function() {
     alert("Selecione um cliente ou pet para editar.");
 });
 
+const btnCancelar = document.getElementById("btnCancelar");
+
+btnCancelar.addEventListener("click", function() {
+    const idCliente = document.getElementById("idCliente").value;
+    const idPet = document.getElementById("idPet").value;
+
+    const confirmar = confirm(
+        "DESEJA CANCELAR? AS INFORMAÇÕES NÃO SALVAS SERÃO PERDIDAS."
+    );
+
+    if (!confirmar) {
+        return;
+    }
+
+    // CANCELAR EDIÇÃO DO PET
+    if (idPet) {
+        bloquearCamposPet();
+        btnSalvarAlteracoes.disabled = true;
+        return;
+    }
+
+    // CANCELAR EDIÇÃO DO CLIENTE
+    if (idCliente) {
+        bloquearCamposCliente();
+        btnSalvarAlteracoes.disabled = true;
+        return;
+    }
+
+    // CANCELAR CADASTRO DE NOVO CLIENTE
+    document.getElementById("idCliente").value = "";
+    document.getElementById("idPet").value = "";
+
+    document.querySelectorAll("#acoesFormulario input").forEach(campo => {
+        campo.value = "";
+    });
+
+    bloquearCamposCliente();
+    bloquearCamposPet();
+
+    btnSalvarAlteracoes.disabled = true;
+});
+
 // BOTÃO NOVO PET
 
 const btnNovoPet = document.getElementById("btnNovoPet");
 btnNovoPet.disabled = true;
+
 
 btnNovoPet.addEventListener("click", function() {
     document.getElementById("idPet").value = "";
@@ -503,9 +642,14 @@ btnNovoPet.addEventListener("click", function() {
     document.getElementById("caracteristicasPet").value = "";
     document.getElementById("detalhesServico").value = "";
     document.getElementById("observacoes").value = "";
+
     liberarCamposPet();
 
     campoTipoOutro.hidden = true;
+
+    // HABILITAR CADASTRAR E DESABILITAR SALVAR ALTERAÇÕES
+    btnSalvar.disabled = false;
+    btnSalvarAlteracoes.disabled = true;
 
     document.getElementById("nomePet").focus();
 });
@@ -544,7 +688,8 @@ const camposCliente = [
     "email",
     "endereco",
     "cpfCnpj",
-    "dataRegistro"
+    "dataRegistro",
+    "ultimoAtendimento"
 ];
 
 function bloquearCamposCliente() {
@@ -592,17 +737,32 @@ btnExcluir.addEventListener("click", async function() {
             alert("Pet excluído com sucesso!");
 
             const botaoPet = document.querySelector(
-                `.btnSelecionarPet[data-id="${idPet}"]`
-            );
+          `.btnSelecionarPet[data-id="${idPet}"]`
+    );
 
-            if (botaoPet) {
-                botaoPet.closest("tr").remove();
-            }
+        if (botaoPet) {
+            botaoPet.closest("tr").remove();
+    }
 
-            document.getElementById("idPet").value = "";
-            bloquearCamposPet();
-            btnSalvarAlteracoes.disabled = true;
+        // LIMPAR OS CAMPOS DO PET
+        document.getElementById("idPet").value = "";
+        document.getElementById("nomePet").value = "";
+        document.getElementById("sexo").value = "";
+        document.getElementById("tipoPet").value = "";
+        document.getElementById("raca").value = "";
+        document.getElementById("porte").value = "";
+        document.getElementById("tipoOutro").value = "";
+        document.getElementById("caracteristicasPet").value = "";
+        document.getElementById("detalhesServico").value = "";
+        document.getElementById("observacoes").value = "";
 
+        campoTipoOutro.hidden = true;
+
+        bloquearCamposPet();
+
+        btnSalvar.disabled = true;
+        btnSalvarAlteracoes.disabled = true;
+        btnNovoPet.disabled = false;
         } catch (erro) {
             console.error("Erro ao excluir pet:", erro);
             alert("Erro ao conectar com o servidor.");
@@ -630,14 +790,31 @@ btnExcluir.addEventListener("click", async function() {
 
             alert("Cliente excluído com sucesso!");
 
+            // LIMPAR OS IDENTIFICADORES
             document.getElementById("idCliente").value = "";
             document.getElementById("idPet").value = "";
 
             formClientePet.reset();
+
+            document.getElementById("nomePet").value = "";
+            document.getElementById("sexo").value = "";
+            document.getElementById("tipoPet").value = "";
+            document.getElementById("raca").value = "";
+            document.getElementById("porte").value = "";
+            document.getElementById("tipoOutro").value = "";
+            document.getElementById("caracteristicasPet").value = "";
+            document.getElementById("detalhesServico").value = "";
+            document.getElementById("observacoes").value = "";
+
             bloquearCamposCliente();
             bloquearCamposPet();
+
+            btnSalvar.disabled = true;
             btnSalvarAlteracoes.disabled = true;
+            btnNovoPet.disabled = true;
+
             listaPets.hidden = true;
+            campoTipoOutro.hidden = true;
 
         } catch (erro) {
             console.error("Erro ao excluir cliente:", erro);
