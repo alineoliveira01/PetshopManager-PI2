@@ -636,33 +636,6 @@ function atualizarLegendaServicos() {
         }
     );
 }
-/* ABRIR CONFIGURAÇÕES PELO MENU LATERAL */
-
-const linkConfiguracoesMenu =
-    document.getElementById("linkConfiguracoesMenu");
-
-if (linkConfiguracoesMenu) {
-    linkConfiguracoesMenu.addEventListener("click", (evento) => {
-        evento.preventDefault();
-
-        window.location.href =
-            "agenda.html?abrirConfiguracoes=1";
-    });
-}
-
-/* ABRIR CONFIGURAÇÕES AO ENTRAR NA AGENDA */
-
-const parametrosURL = new URLSearchParams(window.location.search);
-
-if (parametrosURL.get("abrirConfiguracoes") === "1") {
-    document.getElementById("btnConfiguracoesAgenda")?.click();
-
-    window.history.replaceState(
-        {},
-        document.title,
-        window.location.pathname
-    );
-}
 
 function montarListaConfiguracao() {
     listaConfiguracaoServicos.replaceChildren();
@@ -763,6 +736,7 @@ function abrirConfiguracoes() {
 montarListaConfiguracao();
 
 janelaConfiguracoes.style.display = "flex";
+console.log("Janela de configurações aberta!");
 
 const botao = document.getElementById("btnConfiguracoesAgenda");
 const painel = janelaConfiguracoes.querySelector(".configuracoes-agenda");
@@ -780,7 +754,18 @@ painel.style.top = `${Math.max(margem, Math.min(topoIdeal, topoMaximo))}px`;
 painel.style.right = "5px";
 painel.style.left = "auto";
 
+}
 
+/* ABRIR CONFIGURAÇÕES PELO MENU LATERAL */
+
+const linkConfiguracoesMenu =
+    document.getElementById("linkConfiguracoesMenu");
+
+if (linkConfiguracoesMenu && janelaConfiguracoes) {
+    linkConfiguracoesMenu.addEventListener("click", (evento) => {
+        evento.preventDefault();
+        abrirConfiguracoes();
+    });
 }
 
 function salvarConfiguracoes() {

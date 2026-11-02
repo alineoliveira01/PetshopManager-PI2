@@ -1,0 +1,167 @@
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #DFEFF5;
+    font-family: 'Roboto', Arial, sans-serif;
+    color: #3f474d;
+}
+
+.container-login {
+    width: 100%;
+    max-width: 380px;
+    padding: 40px;
+    background-color: #ffffff;
+    border: 1px solid #d5e0e4;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(40, 86, 101, 0.12);
+}
+
+.container-login h1 {
+    text-align: center;
+    color: #285665;
+    font-size: 28px;
+    margin-bottom: 8px;
+    letter-spacing: 2px;
+}
+
+.container-login h2 {
+    text-align: center;
+    color: #527481;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 30px;
+}
+
+#formEntrar,
+#formRecuperacao,
+#formNovaSenha {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.container-login label {
+    color: #285665;
+    font-size: 13px;
+    font-weight: 600;
+    margin-top: 8px;
+}
+
+.container-login input {
+    width: 100%;
+    height: 42px;
+    padding: 0 12px;
+    border: 1px solid #74a5b7;
+    border-radius: 6px;
+    background-color: #fbfcfd;
+    color: #3f474d;
+    font-size: 13px;
+    outline: none;
+}
+
+.container-login input:focus {
+    border-color: #4d9bb5;
+    box-shadow: 0 0 0 2px rgba(116, 165, 183, 0.15);
+}
+
+.campo-senha {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.campo-senha input {
+    padding-right: 42px;
+}
+
+.mostrar-senha {
+    position: absolute;
+    right: 10px;
+    border: none;
+    background: transparent;
+    color: #527481;
+    cursor: pointer;
+    font-size: 17px;
+}
+
+.botao-principal {
+    width: 100%;
+    height: 42px;
+    margin-top: 22px;
+    border: 1px solid #74a5b7;
+    border-radius: 6px;
+    background-color: #a2c4cf;
+    color: #285665;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.botao-principal:hover {
+    background-color: #81b7c8;
+}
+
+.botao-principal:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.link-recuperacao {
+    display: block;
+    margin: 22px auto 0;
+    border: none;
+    background: transparent;
+    color: #527481;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.link-recuperacao:hover {
+    color: #285665;
+    text-decoration: underline;
+}
+
+.descricao {
+    margin-bottom: 20px;
+    color: #527481;
+    font-size: 13px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.mensagem {
+    min-height: 18px;
+    margin-top: 8px;
+    font-size: 12px;
+    text-align: center;
+}
+
+.mensagem.erro {
+    color: #b42318;
+}
+
+.mensagem.sucesso {
+    color: #28734b;
+}
+
+.tela-oculta {
+    display: none;
+}
+
+@media (max-width: 420px) {
+    .container-login {
+        padding: 30px 22px;
+    }
+}

@@ -31,6 +31,18 @@ db.serialize(() => {
         )
     `);
 
+    db.run(`
+    CREATE TABLE IF NOT EXISTS usuarios (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nome TEXT NOT NULL,
+        usuario TEXT UNIQUE NOT NULL,
+        senha TEXT NOT NULL,
+        perfil TEXT NOT NULL DEFAULT 'funcionario',
+        ativo INTEGER NOT NULL DEFAULT 1,
+        dataCadastro TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+`);
+
     db.run(`ALTER TABLE clientes ADD COLUMN endereco TEXT`, err => {
         if (err && !err.message.includes("duplicate column name")) {
             console.error("Erro ao adicionar endereço:", err.message);

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Petshop - Acesso</title>
+
+    <link rel="stylesheet" href="entrar.css">
+    <script src="entrar.js" defer></script>
+</head>
+
+<body>
+
+    <main class="container-login">
+
+        <section id="telaLogin">
+
+            <h1>PETSHOP</h1>
+            <h2>ACESSO AO SISTEMA</h2>
+
+            <form id="formEntrar">
+
+                <label for="usuario">USUÁRIO</label>
+                <input
+                    type="text"
+                    id="usuario"
+                    name="usuario"
+                    placeholder="DIGITE SEU USUÁRIO"
+                    autocomplete="username"
+                    required
+                >
+
+                <label for="senha">SENHA</label>
+
+                <div class="campo-senha">
+                    <input
+                        type="password"
+                        id="senha"
+                        name="senha"
+                        placeholder="DIGITE SUA SENHA"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="mostrar-senha"
+                        data-alvo="senha"
+                        aria-label="Mostrar senha"
+                    >◉</button>
+                </div>
+
+                <button type="submit" class="botao-principal">
+                    ENTRAR
+                </button>
+
+                <p id="mensagemLogin" class="mensagem"></p>
+
+            </form>
+
+            <button
+                type="button"
+                class="link-recuperacao"
+                id="abrirRecuperacao"
+            >
+                ESQUECI MINHA SENHA
+            </button>
+
+        </section>
+
+
+        <section id="telaRecuperacao" class="tela-oculta">
+
+            <h1>PETSHOP</h1>
+            <h2>RECUPERAR SENHA</h2>
+
+            <p class="descricao">
+                Informe seu e-mail cadastrado para receber as instruções
+                de recuperação de senha.
+            </p>
+
+            <form id="formRecuperacao">
+
+                <label for="emailRecuperacao">E-MAIL</label>
+
+                <input
+                    type="email"
+                    id="emailRecuperacao"
+                    placeholder="DIGITE SEU E-MAIL"
+                    autocomplete="email"
+                    required
+                >
+
+                <button type="submit" class="botao-principal">
+                    ENVIAR SOLICITAÇÃO
+                </button>
+
+                <p id="mensagemRecuperacao" class="mensagem"></p>
+
+            </form>
+
+            <button
+                type="button"
+                class="link-recuperacao"
+                id="voltarLogin"
+            >
+                VOLTAR AO LOGIN
+            </button>
+
+        </section>
+
+
+        <section id="telaNovaSenha" class="tela-oculta">
+
+            <h1>PETSHOP</h1>
+            <h2>CADASTRAR NOVA SENHA</h2>
+
+            <form id="formNovaSenha">
+
+                <label for="novaSenha">NOVA SENHA</label>
+
+                <div class="campo-senha">
+                    <input
+                        type="password"
+                        id="novaSenha"
+                        placeholder="DIGITE A NOVA SENHA"
+                        autocomplete="new-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="mostrar-senha"
+                        data-alvo="novaSenha"
+                        aria-label="Mostrar senha"
+                    >◉</button>
+                </div>
+
+                <label for="confirmarSenha">CONFIRMAR NOVA SENHA</label>
+
+                <div class="campo-senha">
+                    <input
+                        type="password"
+                        id="confirmarSenha"
+                        placeholder="REPITA A NOVA SENHA"
+                        autocomplete="new-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="mostrar-senha"
+                        data-alvo="confirmarSenha"
+                        aria-label="Mostrar senha"
+                    >◉</button>
+                </div>
+
+                <button type="submit" class="botao-principal">
+                    SALVAR NOVA SENHA
+                </button>
+
+                <p id="mensagemNovaSenha" class="mensagem"></p>
+
+            </form>
+
+            <button
+                type="button"
+                class="link-recuperacao"
+                id="voltarLoginNovaSenha"
+            >
+                VOLTAR AO LOGIN
+            </button>
+
+        </section>
+
+    </main>
+
+</body>
+</html>
