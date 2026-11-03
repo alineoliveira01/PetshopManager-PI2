@@ -372,7 +372,16 @@ btnSalvar.addEventListener("click", async function() {
             document.getElementById("idCliente").value = dados.id;
 
             alert("Cliente cadastrado com sucesso!");
-            return;
+
+            // LIMPAR CAMPOS 
+            document.getElementById("nome").value = "";
+            document.getElementById("email").value = "";
+            document.getElementById("telefone").value = "";
+            document.getElementById("endereco").value = "";
+            document.getElementById("cpfCnpj").value = "";
+            document.getElementById("dataRegistro").value = "";
+
+
         }
 
 

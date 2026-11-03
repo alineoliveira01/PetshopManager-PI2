@@ -112,6 +112,62 @@ async function pesquisarClientesVenda() {
 /* AGENDAMENTOS ENCONTRADOS PARA A VENDA */
 let agendamentosEncontradosVenda = [];
 
+
+let petsVendaCliente = [];
+let petPadraoVendaId = "";
+
+
+async function carregarPetsVenda(idCliente, nomePetAgendamento) {
+
+    try {
+        const resposta = await fetch(
+            `http://localhost:3000/pets/${idCliente}`
+        );
+
+        const pets = await resposta.json();
+
+        if (!resposta.ok) {
+            throw new Error(pets.erro || "Erro ao carregar pets.");
+        }
+
+        petsVendaCliente = pets;
+
+        // Identifica o pet do agendamento selecionado
+        const petPadrao = pets.find(pet =>
+            pet.nomePet?.toUpperCase() ===
+            (nomePetAgendamento || "").toUpperCase()
+        );
+
+        petPadraoVendaId = petPadrao ? String(petPadrao.id) : "";
+       
+
+        // Atualiza o campo Pet que já existe nos dados da venda
+        const campoPet = document.getElementById("petSelecionado");
+
+        campoPet.replaceChildren();
+
+        pets.forEach(pet => {
+            const opcao = document.createElement("option");
+
+            opcao.value = pet.id;
+            opcao.textContent = pet.nomePet;
+
+            if (String(pet.id) === petPadraoVendaId) {
+                opcao.selected = true;
+            }
+
+            campoPet.appendChild(opcao);
+        });
+
+    } catch (erro) {
+        console.error("Erro ao carregar pets da venda:", erro);
+        petsVendaCliente = [];
+        petPadraoVendaId = "";
+
+        alert("Não foi possível carregar os pets deste cliente.");
+    }
+}
+
 /* SELECIONAR AGENDAMENTO PARA A VENDA */
 async function selecionarAgendamentoVenda(agendamento) {
     const campoIdCliente = document.getElementById("idClienteVenda");
@@ -156,13 +212,12 @@ async function selecionarAgendamentoVenda(agendamento) {
     campoIdCliente.value = "";
     alert("Não foi possível carregar os dados completos do cliente.");
 }
-    const campoPet = document.getElementById("petSelecionado");
-    campoPet.replaceChildren();
-
-    const opcaoPet = document.createElement("option");
-    opcaoPet.value = agendamento.pet || "";
-    opcaoPet.textContent = agendamento.pet || "Pet não informado";
-    campoPet.appendChild(opcaoPet);
+        if (campoIdCliente.value) {
+        await carregarPetsVenda(
+            campoIdCliente.value,
+            agendamento.pet
+        );
+    }
 
     // A DATA DO AGENDAMENTO NÃO CONFIRMA A ÚLTIMA VISITA REALIZADA.
     document.getElementById("ultimaVisita").value = "";
@@ -174,4 +229,200 @@ async function selecionarAgendamentoVenda(agendamento) {
     dadosPet.hidden = false;
 }
 
+// ADICIONAR ITEM À VENDA
 
+const btnAdicionarItem = document.getElementById("btnAdicionarItem");
+const tabelaItensVenda = document.getElementById("tabelaItensVenda");
+
+btnAdicionarItem.addEventListener("click", function () {
+
+    const linha = document.createElement("tr");
+
+    linha.innerHTML = `
+        <td>
+           <select class="tipoItem">
+                <option value="servico">Serviço</option>
+                <option value="produto">Produto</option>
+            </select>
+        </td>
+
+                <td>
+            <input type="text" class="nomeItem"
+                   placeholder="Produto ou serviço">
+        </td>
+
+        <td>
+            <select class="petItem">
+                <option value="">Sem pet</option>
+            </select>
+        </td>
+
+        <td>
+            <input type="number" class="quantidadeItem"
+                   min="1" value="1">
+        </td>
+
+        <td>
+            <input type="number" class="valorUnitario"
+                   min="0" step="0.01" placeholder="0,00">
+        </td>
+
+        <td>
+            <input type="number" class="descontoItem"
+                   min="0" step="0.01" value="0">
+        </td>
+
+        <td>
+            <input type="number" class="totalItem"
+                   readonly value="0">
+        </td>
+
+        <td>
+            <button type="button" class="btnExcluirItem">
+                Excluir
+            </button>
+        </td>
+    `;
+
+    tabelaItensVenda.appendChild(linha);
+
+    // CARREGAR PETS NA LINHA DA VENDA
+
+    const campoPetItem = linha.querySelector(".petItem");
+
+    petsVendaCliente.forEach(pet => {
+        const opcao = document.createElement("option");
+
+        opcao.value = pet.id;
+        opcao.textContent = pet.nomePet;
+
+        campoPetItem.appendChild(opcao);
+    });
+
+    // PET ATUALMENTE SELECIONADO
+
+    const petAtual = document.getElementById("petSelecionado");
+
+    campoPetItem.value = petAtual.value || String(petPadraoVendaId);
+
+    // SELECIONAR O PET DO AGENDAMENTO
+
+    const tipoItem = linha.querySelector(".tipoItem");
+
+    tipoItem.addEventListener("change", function() {
+
+        if (this.value === "servico") {
+            const petAtual = document.getElementById("petSelecionado");
+
+            campoPetItem.value =
+                petAtual.value || String(petPadraoVendaId);
+
+        } else {
+            campoPetItem.value = "";
+        }
+
+    });
+
+    if (tipoItem.value === "servico") {
+        campoPetItem.value =
+            petAtual.value || String(petPadraoVendaId);
+    }
+
+    atualizarEventosItem(linha);
+
+});
+
+// ATUALIZAR VALORES DO ITEM
+
+function atualizarEventosItem(linha) {
+
+    const quantidade = linha.querySelector(".quantidadeItem");
+    const valorUnitario = linha.querySelector(".valorUnitario");
+    const desconto = linha.querySelector(".descontoItem");
+    const total = linha.querySelector(".totalItem");
+
+    function calcularItem() {
+
+        const qtd = Number(quantidade.value) || 0;
+        const valor = Number(valorUnitario.value) || 0;
+        const desc = Number(desconto.value) || 0;
+
+        total.value = Math.max(0, (qtd * valor) - desc).toFixed(2);
+
+        calcularValoresVenda();
+    }
+
+    quantidade.addEventListener("input", calcularItem);
+    valorUnitario.addEventListener("input", calcularItem);
+    desconto.addEventListener("input", calcularItem);
+
+    linha.querySelector(".btnExcluirItem")
+        .addEventListener("click", function () {
+
+            linha.remove();
+            calcularValoresVenda();
+
+        });
+}
+
+
+// CALCULAR VALORES GERAIS DA VENDA
+
+function calcularValoresVenda() {
+
+    let bruto = 0;
+
+    document.querySelectorAll(".totalItem").forEach(item => {
+        bruto += Number(item.value) || 0;
+    });
+
+    const descontoVenda = Number(
+        document.getElementById("descontoVenda").value
+    ) || 0;
+
+    const taxaPagamento = Number(
+        document.getElementById("taxaPagamento").value
+    ) || 0;
+
+    const valorVenda = Math.max(0, bruto - descontoVenda);
+    const valorLiquido = Math.max(0, valorVenda - taxaPagamento);
+
+    document.getElementById("valorBruto").value = bruto.toFixed(2);
+
+    document.getElementById("valorVenda").value =
+        valorVenda.toFixed(2);
+
+    document.getElementById("valorLiquido").value =
+        valorLiquido.toFixed(2);
+
+    calcularTroco();
+}
+
+
+// ATUALIZAR CÁLCULOS QUANDO ALTERAR DESCONTO OU TAXA
+
+document.getElementById("descontoVenda")
+    .addEventListener("input", calcularValoresVenda);
+
+document.getElementById("taxaPagamento")
+    .addEventListener("input", calcularValoresVenda);
+
+
+// CALCULAR TROCO
+
+function calcularTroco() {
+
+    const recebido = Number(
+        document.getElementById("valorRecebido").value
+    ) || 0;
+
+    const liquido = Number(
+        document.getElementById("valorLiquido").value
+    ) || 0;
+
+    document.getElementById("troco").value =
+        Math.max(0, recebido - liquido).toFixed(2);
+}
+
+document.getElementById("valorRecebido")
+    .addEventListener("input", calcularTroco);
